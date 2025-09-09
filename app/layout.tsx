@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
     default: 'Gonza',
-    template: '%s | Gonza',
+    template: 'Gonza',
   },
   description: 'Desarrollador apasionado por el bienestar que está aprendiendo magia en FAMAF y llevándola a la práctica con Catsule Corp.',
   icons: {
