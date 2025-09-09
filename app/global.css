@@ -48,7 +48,23 @@ html {
 }
 
 .prose a {
-  @apply underline transition-all decoration-neutral-400 dark:decoration-neutral-600 underline-offset-2 decoration-[0.1em];
+  @apply transition-all;
+  color: #fbbf24 !important;
+  text-decoration: none !important;
+}
+
+.prose a:hover {
+  text-decoration: none !important;
+}
+
+/* Enlaces del home mantienen el color celeste */
+section:not(.prose) a {
+  color: #59A8E7 !important;
+  text-decoration: none !important;
+}
+
+section:not(.prose) a:hover {
+  text-decoration: none !important;
 }
 
 .prose .anchor:after {
