@@ -15,10 +15,10 @@ export default function Page() {
           rel="noopener noreferrer"
           style={{ 
             color: '#59A8E7', 
-            display: 'inline !important',
-            float: 'none !important',
-            width: 'auto !important',
-            clear: 'none !important'
+            display: 'inline',
+            float: 'none',
+            width: 'auto',
+            clear: 'none'
           }}
         >
           FAMAF
@@ -30,10 +30,10 @@ export default function Page() {
           rel="noopener noreferrer"
           style={{ 
             color: '#59A8E7', 
-            display: 'inline !important',
-            float: 'none !important',
-            width: 'auto !important',
-            clear: 'none !important'
+            display: 'inline',
+            float: 'none',
+            width: 'auto',
+            clear: 'none'
           }}
         >
           Catsule Corp
