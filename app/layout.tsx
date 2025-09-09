@@ -15,6 +15,11 @@ export const metadata: Metadata = {
     template: '%s | Gonza',
   },
   description: 'Desarrollador apasionado por el bienestar que está aprendiendo magia en FAMAF y llevándola a la práctica con Catsule Corp.',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
   openGraph: {
     title: 'Gonza',
     description: 'Desarrollador apasionado por el bienestar que está aprendiendo magia en FAMAF y llevándola a la práctica con Catsule Corp.',
