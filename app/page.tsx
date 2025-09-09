@@ -7,7 +7,7 @@ export default function Page() {
         Gonza
       </h1>
       <p className="mb-12">
-        Hola! Soy un desarrollador apasionado por el bienestar
+      ¡Hola! Soy un desarrollador apasionado por el bienestar
         que está aprendiendo magia en{' '}
         <a
           href="https://youtu.be/NyJQ9PGYJnA"
