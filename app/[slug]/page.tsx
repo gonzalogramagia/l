@@ -84,14 +84,16 @@ export default function Blog({ params }) {
         }}
       />
       <div className="-mt-12 pt-7">
-        <Link 
-          href="/" 
-          className="inline-flex items-center text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 mb-12 transition-colors"
-        >
+         <Link
+           href="/"
+           className="inline-flex items-center text-sm mb-12 transition-colors"
+           style={{ color: 'var(--tw-color-neutral-900) !important' }}
+         >
           <svg 
             className="w-4 h-4 mr-1" 
             fill="none" 
-            stroke="currentColor" 
+            stroke="#fbbf24"
+            style={{ stroke: '#fbbf24' }} 
             viewBox="0 0 24 24"
           >
             <path 
@@ -118,12 +120,14 @@ export default function Blog({ params }) {
       <div className="mt-8 my-4">
         <Link 
           href="/" 
-          className="inline-flex items-center text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 transition-colors"
+          className="inline-flex items-center text-sm transition-colors"
+          style={{ color: 'var(--tw-color-neutral-900) !important' }}
         >
           <svg 
             className="w-4 h-4 mr-1" 
             fill="none" 
-            stroke="currentColor" 
+            stroke="#fbbf24"
+            style={{ stroke: '#fbbf24' }} 
             viewBox="0 0 24 24"
           >
             <path 
