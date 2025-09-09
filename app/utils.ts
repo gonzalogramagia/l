@@ -50,7 +50,7 @@ function getMDXData(dir) {
 }
 
 export function getBlogPosts() {
-  return getMDXData(path.join(process.cwd(), 'app', 'blog', 'posts'))
+  return getMDXData(path.join(process.cwd(), 'app', 'posts'))
 }
 
 export function formatDate(date: string, includeRelative = false) {
@@ -76,10 +76,14 @@ export function formatDate(date: string, includeRelative = false) {
     formattedDate = 'Today'
   }
 
-  let fullDate = targetDate.toLocaleString('en-us', {
-    month: 'long',
+  let fullDate = targetDate.toLocaleString('es-es', {
     day: 'numeric',
-    year: 'numeric',
+    month: 'long',
+  })
+
+  // Capitalizar la primera letra del mes (después de "de ")
+  fullDate = fullDate.replace(/(\d+ de )([a-z])/, (match, prefix, month) => {
+    return prefix + month.toUpperCase()
   })
 
   if (!includeRelative) {

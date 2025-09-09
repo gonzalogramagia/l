@@ -11,16 +11,16 @@ import { baseUrl } from './sitemap'
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Next.js Portfolio Starter',
-    template: '%s | Next.js Portfolio Starter',
+    default: 'Gonza',
+    template: '%s | Gonza',
   },
-  description: 'This is my portfolio.',
+  description: 'Desarrollador apasionado por el bienestar que está aprendiendo magia en FAMAF y llevándola a la práctica con Catsule Corp.',
   openGraph: {
-    title: 'My Portfolio',
-    description: 'This is my portfolio.',
+    title: 'Gonza',
+    description: 'Desarrollador apasionado por el bienestar que está aprendiendo magia en FAMAF y llevándola a la práctica con Catsule Corp.',
     url: baseUrl,
-    siteName: 'My Portfolio',
-    locale: 'en_US',
+    siteName: 'Gonza',
+    locale: 'es_ES',
     type: 'website',
   },
   robots: {
@@ -53,7 +53,7 @@ export default function RootLayout({
       )}
     >
       <body className="antialiased max-w-xl mx-4 mt-8 lg:mx-auto">
-        <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
+        <main className="flex-auto min-w-0 mt-6 flex flex-col px-8 lg:px-0">
           <Navbar />
           {children}
           <Footer />
