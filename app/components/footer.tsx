@@ -35,10 +35,10 @@ export default function Footer() {
             className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
             rel="noopener noreferrer"
             target="_blank"
-            href="https://github.com/gonzalogramagia"
+            href="https://medium.com/@gonzalogramagia"
           >
             <ArrowIcon />
-            <p className="ml-2 h-7">github</p>
+            <p className="ml-2 h-7">medium</p>
           </a>
         </li>
         <li>
@@ -46,10 +46,10 @@ export default function Footer() {
             className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
             rel="noopener noreferrer"
             target="_blank"
-            href="https://gonzalogramagia.medium.com/"
+            href="https://www.youtube.com/@gonzalogramagia"
           >
             <ArrowIcon />
-            <p className="ml-2 h-7">medium</p>
+            <p className="ml-2 h-7">youtube</p>
           </a>
         </li>
         <li>
@@ -68,10 +68,10 @@ export default function Footer() {
             className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
             rel="noopener noreferrer"
             target="_blank"
-            href="https://youtube.com/@gonzagramaglia"
+            href="https://github.com/gonzalogramagia"
           >
             <ArrowIcon />
-            <p className="ml-2 h-7">youtube</p>
+            <p className="ml-2 h-7">github</p>
           </a>
         </li>
       </ul>

@@ -1,6 +1,6 @@
 # Gonza
 
-Desarrollador apasionado por el bienestar que está aprendiendo magia en FAMAF y llevándola a la práctica con Catsule Corp.
+Desarrollador apasionado por el bienestar, que está aprendiendo magia en FAMAF y llevandolá a la práctica con Catsule Corp.
 
 ## Características
 
