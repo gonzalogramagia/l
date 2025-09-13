@@ -10,7 +10,7 @@ export default function Page() {
       ¡Hola! Soy un desarrollador apasionado por el bienestar,
         que está aprendiendo magia en{' '}
         <a
-          href="https://youtu.be/NyJQ9PGYJnA"
+          href="https://goalritmo.com"
           target="_blank"
           rel="noopener noreferrer"
           style={{ 
