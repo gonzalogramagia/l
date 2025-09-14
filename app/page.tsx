@@ -23,7 +23,7 @@ export default function Page() {
         >
           FAMAF
         </a>
-        {' y llevandolá a la práctica con '}
+        {' y llevandolá a la práctica mediante '}
         <a
           href="https://catsulecorp.com/"
           target="_blank"
