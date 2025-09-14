@@ -6,6 +6,7 @@ type Metadata = {
   publishedAt: string
   summary: string
   image?: string
+  featured?: boolean
 }
 
 function parseFrontmatter(fileContent: string) {
@@ -20,7 +21,13 @@ function parseFrontmatter(fileContent: string) {
     let [key, ...valueArr] = line.split(': ')
     let value = valueArr.join(': ').trim()
     value = value.replace(/^['"](.*)['"]$/, '$1') // Remove quotes
-    metadata[key.trim() as keyof Metadata] = value
+    
+    const trimmedKey = key.trim() as keyof Metadata
+    if (trimmedKey === 'featured') {
+      metadata[trimmedKey] = value === 'true'
+    } else {
+      metadata[trimmedKey] = value as any
+    }
   })
 
   return { metadata: metadata as Metadata, content }
@@ -51,6 +58,10 @@ function getMDXData(dir) {
 
 export function getBlogPosts() {
   return getMDXData(path.join(process.cwd(), 'app', 'posts'))
+}
+
+export function getFeaturedPosts() {
+  return getBlogPosts().filter(post => post.metadata.featured === true)
 }
 
 export function formatDate(date: string, includeRelative = false) {
