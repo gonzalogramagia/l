@@ -55,7 +55,7 @@ export default function LocalhostPage() {
 
 
   return (
-    <section>
+    <section className="mb-8">
       <div className="mb-8">
         <h1 className="mb-4 text-2xl font-semibold tracking-tighter">
           Localhost Notes

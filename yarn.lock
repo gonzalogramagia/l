@@ -2391,6 +2391,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"resend@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "resend@npm:6.1.1"
+  peerDependencies:
+    "@react-email/render": ^1.1.0
+  peerDependenciesMeta:
+    "@react-email/render":
+      optional: true
+  checksum: 10c0/a3881efffc502344a3d789fff6a8acf0fa34fd8cea26e1eb92c6d50462f8b0d0f40700b1bb7a0e4d560ad3cc600e6d284ec9fad79d1dc8573d4a731eb022e82f
+  languageName: node
+  linkType: hard
+
 "resolve@npm:^1.1.7":
   version: 1.22.10
   resolution: "resolve@npm:1.22.10"
@@ -2434,6 +2446,7 @@ __metadata:
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     remark-gfm: "npm:^4.0.1"
+    resend: "npm:^6.1.1"
     sugar-high: "npm:^0.6.0"
     tailwindcss: "npm:4.0.0-alpha.13"
     typescript: "npm:5.3.3"
