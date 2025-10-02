@@ -12,4 +12,4 @@ Desarrollador apasionado por el bienestar, que está aprendiendo magia en FAMAF 
 - Tailwind CSS v4
 - Analytics de Vercel
 - Fuente Geist
-
+- **Integración con ClickUp** - Visualizo mis tareas de forma personalizada en `/clickup` (ingresando una contraseña que configuro en el archivo `.env`)
