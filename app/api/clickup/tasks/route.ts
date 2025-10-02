@@ -93,7 +93,7 @@ export async function POST(request: Request) {
     const spacesData = await spacesResponse.json();
 
     // Obtener todas las tareas de todos los espacios
-    const allTasks = [];
+    const allTasks: any[] = [];
 
     for (const space of spacesData.spaces) {
       // Obtener listas del espacio
