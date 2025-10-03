@@ -18,7 +18,7 @@ interface Task {
   url: string;
   assignees: Array<{
     username: string;
-    color: string;
+    profilePicture?: string;
   }>;
 }
 
@@ -47,7 +47,62 @@ export default function ClickUpPage() {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [dateFilter, setDateFilter] = useState<'all' | 'with-date' | 'no-date'>('all');
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [priorityFilter, setPriorityFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
+  const [newTaskName, setNewTaskName] = useState('');
+  const [newTaskDescription, setNewTaskDescription] = useState('');
+  const [newTaskDate, setNewTaskDate] = useState<string>('');
+  const [newTaskPriority, setNewTaskPriority] = useState<number>(3);
+  const [isCreatingTask, setIsCreatingTask] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isEditingTask, setIsEditingTask] = useState(false);
+  const [editTaskName, setEditTaskName] = useState('');
+  const [editTaskDescription, setEditTaskDescription] = useState('');
+  const [editTaskDate, setEditTaskDate] = useState<string>('');
+  const [editTaskPriority, setEditTaskPriority] = useState<number>(3);
+  const [isUpdatingTask, setIsUpdatingTask] = useState(false);
+
+  const Header = () => (
+    <div className="px-4 lg:px-0 max-w-xl mx-auto mb-8">
+      <div className="mb-8">
+        <div className="flex items-center gap-4">
+          <a 
+            href="https://app.clickup.com/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="cursor-pointer"
+          >
+            <img 
+              src="/clickup-logo.png" 
+              alt="ClickUp Logo" 
+              className="h-16 w-auto rounded-lg hover:opacity-80 transition-opacity"
+            />
+          </a>
+          <div>
+            <a 
+              href="https://app.clickup.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="cursor-pointer"
+            >
+              <h1 className="text-3xl font-bold mb-2 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Mis Tareas</h1>
+            </a>
+            <a 
+              href="https://app.clickup.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+            >
+              app.clickup.com
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   const fetchTasks = async (pwd: string) => {
     try {
@@ -71,13 +126,10 @@ export default function ClickUpPage() {
       setUser(data.user);
       setWorkspace(data.workspace);
       setIsAuthenticated(true);
-      
-      // Guardar contraseña en sessionStorage (solo para esta sesión)
       sessionStorage.setItem('clickup_auth', 'true');
+      sessionStorage.setItem('clickup_password', pwd);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
-      setIsAuthenticated(false);
-      sessionStorage.removeItem('clickup_auth');
     } finally {
       setLoading(false);
       setIsAuthenticating(false);
@@ -94,19 +146,15 @@ export default function ClickUpPage() {
     fetchTasks(password);
   };
 
-  const handleRefresh = () => {
-    if (password) {
-      fetchTasks(password);
-    }
-  };
-
   const handleLogout = () => {
     setIsAuthenticated(false);
     setTasks([]);
     setUser(null);
     setWorkspace(null);
     setPassword('');
+    setError(null);
     sessionStorage.removeItem('clickup_auth');
+    sessionStorage.removeItem('clickup_password');
   };
 
   const getPriorityLabel = (priority: Task['priority']) => {
@@ -143,13 +191,26 @@ export default function ClickUpPage() {
       if (isCompleted) return false;
     }
 
-    // Filtro de prioridad
+    // Filtro por estado específico
+    if (statusFilter !== 'all') {
+      if (statusFilter !== task.status.status) {
+        return false;
+      }
+    }
+
+    // Filtro por prioridad específica
+    if (priorityFilter !== 'all') {
+      const taskPriority = task.priority?.priority || 'none';
+      if (taskPriority !== priorityFilter) return false;
+    }
+
+    // Filtro de prioridad múltiple (mantener compatibilidad)
     if (selectedPriorities.length > 0) {
       const taskPriority = task.priority?.priority || 'none';
       if (!selectedPriorities.includes(taskPriority)) return false;
     }
 
-    // Filtro de estado
+    // Filtro de estado múltiple (mantener compatibilidad)
     if (selectedStatuses.length > 0) {
       if (!selectedStatuses.includes(task.status.status)) return false;
     }
@@ -158,12 +219,32 @@ export default function ClickUpPage() {
     if (selectedDate) {
       if (!task.due_date) return false; // Excluir tareas sin fecha
       const taskDate = new Date(parseInt(task.due_date));
-      const filterDate = new Date(selectedDate);
-      if (taskDate.toDateString() !== filterDate.toDateString()) return false;
+      const filterDate = new Date(selectedDate + 'T00:00:00');
+      
+      // Comparar solo año, mes y día
+      const taskYear = taskDate.getFullYear();
+      const taskMonth = taskDate.getMonth();
+      const taskDay = taskDate.getDate();
+      
+      const filterYear = filterDate.getFullYear();
+      const filterMonth = filterDate.getMonth();
+      const filterDay = filterDate.getDate();
+      
+      if (taskYear !== filterYear || taskMonth !== filterMonth || taskDay !== filterDay) {
+        return false;
+      }
     } else {
       // Filtros de fecha generales (solo si no hay fecha específica)
       if (dateFilter === 'with-date' && !task.due_date) return false;
       if (dateFilter === 'no-date' && task.due_date) return false;
+    }
+
+    // Filtro de búsqueda por nombre o descripción
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      const nameMatch = task.name.toLowerCase().includes(query);
+      const descriptionMatch = task.description?.toLowerCase().includes(query) || false;
+      if (!nameMatch && !descriptionMatch) return false;
     }
 
     return true;
@@ -179,93 +260,226 @@ export default function ClickUpPage() {
     task.status.status.toLowerCase().includes('closed')
   ).length;
 
-  const visibleTasks = filteredTasks.slice(0, visibleCount);
-  const hasMore = visibleCount < filteredTasks.length;
-
-  const loadMore = () => {
-    setVisibleCount(prev => prev + 12);
-  };
-
-  // Get unique statuses and priorities
-  const uniqueStatuses = Array.from(new Set((tasks || []).map(t => t.status.status)));
-  const uniquePriorities = Array.from(new Set((tasks || []).map(t => t.priority?.priority || 'none')));
-
-  const togglePriority = (priority: string) => {
-    setSelectedPriorities(prev =>
-      prev.includes(priority) ? prev.filter(p => p !== priority) : [...prev, priority]
-    );
-  };
-
-  const toggleStatus = (status: string) => {
-    setSelectedStatuses(prev =>
-      prev.includes(status) ? prev.filter(s => s !== status) : [...prev, status]
-    );
-  };
-
-  const clearAllFilters = () => {
+  const clearFilters = () => {
     setSelectedPriorities([]);
     setSelectedStatuses([]);
     setDateFilter('all');
-    setFilter('all');
     setSelectedDate('');
+    setFilter('all');
+    setStatusFilter('all');
+    setPriorityFilter('all');
+    setSearchQuery('');
+    setVisibleCount(12);
   };
+
+  // Obtener estados y prioridades únicos para los filtros
+  const uniqueStatuses = Array.from(new Set(tasks.map(task => task.status.status)));
+  const uniquePriorities = Array.from(new Set(tasks.map(task => task.priority?.priority || 'none')));
+
+  const handleCreateTask = async () => {
+    if (!newTaskName.trim()) return;
+
+    setIsCreatingTask(true);
+    try {
+      const pwd = sessionStorage.getItem('clickup_password');
+      if (!pwd) {
+        setError('Sesión expirada. Por favor, inicia sesión nuevamente.');
+        return;
+      }
+
+      const response = await fetch('/api/clickup/create-task', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          password: pwd,
+          name: newTaskName,
+          description: newTaskDescription,
+          dueDate: newTaskDate,
+          priority: newTaskPriority,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Error al crear la tarea');
+      }
+
+      // Recargar tareas
+      await fetchTasks(pwd);
+      
+      // Limpiar formulario
+      setNewTaskName('');
+      setNewTaskDescription('');
+      setNewTaskDate('');
+      setNewTaskPriority(3);
+      setShowAddTaskModal(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al crear la tarea');
+    } finally {
+      setIsCreatingTask(false);
+    }
+  };
+
+  const handleUpdateTask = async () => {
+    if (!selectedTask || !editTaskName.trim()) {
+      setError('El nombre de la tarea es requerido');
+      return;
+    }
+
+    setIsUpdatingTask(true);
+    setError(null); // Limpiar errores previos
+    
+    try {
+      const pwd = sessionStorage.getItem('clickup_password');
+      if (!pwd) {
+        setError('Sesión expirada. Por favor, inicia sesión nuevamente.');
+        setIsUpdatingTask(false);
+        return;
+      }
+
+      console.log('Updating task:', {
+        taskId: selectedTask.id,
+        name: editTaskName,
+        description: editTaskDescription,
+        dueDate: editTaskDate,
+        priority: editTaskPriority
+      });
+
+      const response = await fetch('/api/clickup/update-task', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          password: pwd,
+          taskId: selectedTask.id,
+          name: editTaskName,
+          description: editTaskDescription,
+          dueDate: editTaskDate,
+          priority: editTaskPriority,
+        }),
+      });
+
+      const data = await response.json();
+      console.log('Update response:', data);
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error al actualizar la tarea');
+      }
+
+      // Actualizar la tarea localmente en el estado
+      setTasks(prevTasks => 
+        prevTasks.map(task => 
+          task.id === selectedTask.id 
+            ? {
+                ...task,
+                name: editTaskName,
+                description: editTaskDescription,
+                due_date: editTaskDate ? new Date(editTaskDate).getTime().toString() : null,
+                priority: {
+                  priority: editTaskPriority.toString(),
+                  color: task.priority?.color || '#6B7280'
+                }
+              }
+            : task
+        )
+      );
+      
+      // Cerrar modal de edición
+      setIsEditingTask(false);
+      setSelectedTask(null);
+      
+    } catch (err) {
+      console.error('Error updating task:', err);
+      setError(err instanceof Error ? err.message : 'Error al actualizar la tarea');
+    } finally {
+      setIsUpdatingTask(false);
+    }
+  };
+
+  const startEditingTask = (task: Task) => {
+    setSelectedTask(task);
+    setEditTaskName(task.name);
+    setEditTaskDescription(task.description || '');
+    
+    // Manejar la fecha de manera más segura
+    let dateValue = '';
+    if (task.due_date) {
+      try {
+        const timestamp = typeof task.due_date === 'string' ? parseInt(task.due_date) : task.due_date;
+        if (!isNaN(timestamp) && timestamp > 0) {
+          dateValue = new Date(timestamp).toISOString().split('T')[0];
+        }
+      } catch (error) {
+        console.error('Error parsing date:', error);
+        dateValue = '';
+      }
+    }
+    setEditTaskDate(dateValue);
+    
+    // Manejar la prioridad de manera más segura
+    const priorityValue = task.priority?.priority ? parseInt(task.priority.priority) : 3;
+    setEditTaskPriority(isNaN(priorityValue) ? 3 : priorityValue);
+    
+    setIsEditingTask(true);
+  };
+
+  // Verificar autenticación al cargar
+  useEffect(() => {
+    const auth = sessionStorage.getItem('clickup_auth');
+    const pwd = sessionStorage.getItem('clickup_password');
+    if (auth === 'true' && pwd) {
+      setIsAuthenticated(true);
+      fetchTasks(pwd);
+    }
+  }, []);
 
   // Reset visible count when filters change
   useEffect(() => {
     setVisibleCount(12);
-  }, [filter, selectedPriorities, selectedStatuses, dateFilter]);
+  }, [filter, selectedPriorities, selectedStatuses, dateFilter, statusFilter, priorityFilter, selectedDate, searchQuery]);
 
   // Pantalla de login
   if (!isAuthenticated) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh] pb-16">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center mb-6">
-              <img 
-                src="/images/clickup-logo.png" 
-                alt="ClickUp Logo" 
-                className="w-20 h-20 object-contain rounded-lg"
-              />
-            </div>
-            <h1 className="text-3xl font-bold mb-2">ClickUp Tasks</h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Ingresa la contraseña para ver tus tareas
-            </p>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-2">
-                Contraseña
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="flex-1 px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
-                  placeholder="Ingresa tu contraseña"
-                  disabled={isAuthenticating}
-                  autoFocus
-                />
-                <button
-                  type="submit"
-                  disabled={isAuthenticating || !password.trim()}
-                  className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors shadow-lg hover:shadow-xl whitespace-nowrap cursor-pointer"
-                >
-                  {isAuthenticating ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      Verificando...
-                    </span>
-                  ) : (
-                    'Acceder'
-                  )}
-                </button>
+      <div className="w-full pb-16 pt-6">
+        <Header />
+        
+        <div className="px-4 lg:px-0 max-w-xl mx-auto pt-20 pb-32">
+          <div className="w-full max-w-md">
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Contraseña
+                </label>
+                <div className="flex gap-3">
+                  <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                    placeholder="Ingresa tu contraseña"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    disabled={isAuthenticating || !password.trim()}
+                    className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors shadow-lg hover:shadow-xl whitespace-nowrap cursor-pointer"
+                  >
+                    {isAuthenticating ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        Verificando...
+                      </span>
+                    ) : (
+                      'Acceder'
+                    )}
+                  </button>
+                </div>
               </div>
-            </div>
 
             {error && (
               <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
@@ -273,17 +487,7 @@ export default function ClickUpPage() {
               </div>
             )}
           </form>
-        </div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-white mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Cargando tareas...</p>
+          </div>
         </div>
       </div>
     );
@@ -291,256 +495,449 @@ export default function ClickUpPage() {
 
   return (
     <div className="w-full pb-16 pt-6">
-      {/* Header and Filters - Aligned with navbar/footer */}
-      <div className="px-4 lg:px-0 max-w-xl mx-auto mb-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Mis Tareas</h1>
-            {workspace && (
-              <p className="text-gray-600 dark:text-gray-400">
-                {workspace.name}
-              </p>
-            )}
+      <Header />
+      
+      {loading ? (
+        <div className="flex items-center justify-center min-h-[40vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-white mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-400">Cargando tareas...</p>
           </div>
         </div>
+      ) : (
+        <>
 
-        {/* Filters - Solo mostrar si hay tareas */}
-        {tasks && tasks.length > 0 && (
-          <div className="flex justify-center">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="px-6 py-3 rounded-lg font-medium transition-colors cursor-pointer bg-purple-600 text-white hover:bg-purple-700 flex items-center gap-2"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-              </svg>
-              Todos los Filtros
-            </button>
-          </div>
-        )}
-
-        {/* Advanced Filters */}
-        {tasks && tasks.length > 0 && showFilters && (
-          <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg space-y-4 w-full max-w-[300px] mx-auto">
-            {/* Date Filter */}
-            <div>
-              <h3 className="text-sm font-semibold mb-2">Fecha</h3>
-              <div className="flex gap-2 flex-wrap items-center">
-                <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => {
-                    setSelectedDate(e.target.value);
-                    if (e.target.value) {
-                      setDateFilter('all');
-                    }
-                  }}
-                  placeholder="Calendario"
-                  className={`px-3 py-1.5 text-sm rounded-lg border transition-colors cursor-pointer ${
-                    selectedDate
-                      ? 'bg-purple-600 text-white border-purple-600'
-                      : 'border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
-                />
-                {!selectedDate && (
-                  <button
-                    onClick={() => setDateFilter('no-date')}
-                    className={`px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer ${
-                      dateFilter === 'no-date'
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    Sin fecha
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Priority Filter */}
-            <div>
-              <h3 className="text-sm font-semibold mb-2">Prioridad</h3>
-              <div className="flex gap-2 flex-wrap">
-                {uniquePriorities.map((priority) => (
-                  <button
-                    key={priority}
-                    onClick={() => togglePriority(priority)}
-                    className={`px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer capitalize ${
-                    selectedPriorities.includes(priority)
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
-                >
-                  {priority === 'none' ? 'Sin prioridad' : getPriorityLabel({ priority, color: '' } as any)}
-                </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Status Filter */}
-            <div>
-              <h3 className="text-sm font-semibold mb-2">Estado</h3>
-              <div className="flex gap-2 flex-wrap">
-                {uniqueStatuses.map((status) => (
-                  <button
-                    key={status}
-                    onClick={() => toggleStatus(status)}
-                    className={`px-3 py-1.5 text-sm rounded-lg transition-colors cursor-pointer capitalize ${
-                      selectedStatuses.includes(status)
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    {status}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Clear Filters */}
-            {(selectedPriorities.length > 0 || selectedStatuses.length > 0 || dateFilter !== 'all' || selectedDate) && (
-              <div className="flex justify-center pt-2">
-                <button
-                  onClick={clearAllFilters}
-                  className="px-6 py-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer font-medium"
-                >
-                  Limpiar todos los filtros
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Tasks Grid - Full width */}
-      <div className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] px-16 sm:px-24 lg:px-32 pb-16">
-        <div className="max-w-6xl mx-auto">
-        {/* Tasks Grid */}
-        {!tasks || tasks.length === 0 ? (
-          <div className="grid gap-4 justify-center" style={{ gridTemplateColumns: 'repeat(auto-fill, 300px)' }}>
-            <div className="col-span-full flex items-center justify-center min-h-[40vh]">
-              <div className="text-center max-w-md">
-                <div className="mb-4">
-                  <svg className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold mb-2">No hay tareas disponibles</h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  Parece que no tienes tareas asignadas en este momento
-                </p>
-                <button
-                  onClick={handleRefresh}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors inline-flex items-center gap-2 cursor-pointer"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                  Actualizar
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : filteredTasks.length === 0 ? (
-          <div className="grid gap-4 justify-center" style={{ gridTemplateColumns: 'repeat(auto-fill, 300px)' }}>
-            <div className="col-span-full flex items-center justify-center min-h-[40vh]">
-              <div className="text-center max-w-md">
-                <div className="mb-4">
-                  <svg className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold mb-2">No hay tareas en esta categoría</h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Intenta con otro filtro para ver más tareas
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="grid gap-4 min-w-0 justify-center" style={{ gridTemplateColumns: 'repeat(auto-fill, 300px)' }}>
-            {visibleTasks.map((task) => (
-              <a
-                key={task.id}
-                href={task.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block p-5 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-purple-500 dark:hover:border-purple-500 transition-all hover:shadow-lg group min-w-0"
+          {/* Filtros */}
+          <div className="px-4 lg:px-0 max-w-xl mx-auto mb-6">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="px-3 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md text-sm transition-colors cursor-pointer"
               >
-                {/* Task Header */}
-                <div className="flex items-start justify-between mb-3 min-w-0">
-                  <h3 className="font-semibold text-lg group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors flex-1 pr-2 break-words min-w-0">
-                    {task.name}
-                  </h3>
-                  <svg
-                    className="w-5 h-5 text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors flex-shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </div>
+                {showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
+              </button>
+              <button
+                onClick={() => setShowAddTaskModal(true)}
+                className="px-3 py-1 bg-purple-500 hover:bg-purple-600 text-white rounded-md text-sm transition-colors cursor-pointer"
+              >
+                + Nueva Tarea
+              </button>
+            </div>
 
-                {/* Task Meta */}
-                <div className="flex flex-wrap gap-2 mb-3">
-                  <span
-                    className="px-2 py-1 text-xs font-medium rounded-full capitalize"
-                    style={{
-                      backgroundColor: `${task.status.color}20`,
-                      color: task.status.color,
-                    }}
-                  >
-                    {task.status.status}
-                  </span>
-                  {task.priority && (
-                    <span
-                      className="px-2 py-1 text-xs font-medium rounded-full capitalize"
-                      style={{
-                        backgroundColor: `${task.priority.color}20`,
-                        color: task.priority.color,
-                      }}
+            {/* Filtros refinados */}
+            {showFilters && (
+              <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-4">
+                {/* Primera fila: Por Estado, Por Prioridad, Por Fecha */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Filtro por estado */}
+                  <div className="flex flex-col">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5">
+                      Por Estado
+                    </label>
+                    <select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      className="w-full h-10 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer"
                     >
-                      {getPriorityLabel(task.priority)}
-                    </span>
-                  )}
-                </div>
+                      <option value="all">Todos los estados</option>
+                      {uniqueStatuses.map(status => (
+                        <option key={status} value={status}>{status}</option>
+                      ))}
+                    </select>
+                  </div>
 
-                {/* Task Description */}
-                {task.description && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-                    {task.description.replace(/<[^>]*>/g, '')}
-                  </p>
-                )}
+                  {/* Filtro por prioridad */}
+                  <div className="flex flex-col">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5">
+                      Por Prioridad
+                    </label>
+                    <select
+                      value={priorityFilter}
+                      onChange={(e) => setPriorityFilter(e.target.value)}
+                      className="w-full h-10 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer"
+                    >
+                      <option value="all">Todas las prioridades</option>
+                      {uniquePriorities.map(priority => (
+                        <option key={priority} value={priority}>
+                          {priority === 'none' ? 'Sin prioridad' : getPriorityLabel({ priority } as any)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-                {/* Task Footer */}
-                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-500 min-w-0 gap-2">
-                  <div className="flex items-center gap-1 min-w-0 flex-shrink">
-                    <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span className="truncate">{task.due_date ? formatDate(task.due_date) : 'Por seleccionar'}</span>
+                  {/* Filtro por fecha concreta */}
+                  <div className="flex flex-col">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5">
+                      Por Fecha
+                    </label>
+                    <input
+                      type="date"
+                      value={selectedDate || ''}
+                      onChange={(e) => setSelectedDate(e.target.value || null)}
+                      className="w-full h-10 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
                   </div>
                 </div>
-              </a>
-            ))}
-          </div>
-        )}
 
-      {/* Load More Button */}
-      {hasMore && filteredTasks.length > 0 && (
-        <div className="flex justify-center mt-8">
-          <button
-            onClick={loadMore}
-            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium cursor-pointer"
-          >
-            Cargar más tareas
-          </button>
+                {/* Segunda fila: Buscador (2 columnas) + Botón Limpiar (1 columna) */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5">
+                      Buscar por nombre o descripción
+                    </label>
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full h-10 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      placeholder="Buscar tareas..."
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5">
+                      &nbsp;
+                    </label>
+                    <button
+                      onClick={clearFilters}
+                      className="w-full h-10 px-3 text-sm text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors cursor-pointer border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                    >
+                      Limpiar filtros
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Lista de tareas */}
+          <div className="px-4 lg:px-0 max-w-xl mx-auto space-y-3">
+            {filteredTasks.slice(0, visibleCount).map((task) => (
+              <div
+                key={task.id}
+                className="bg-white dark:bg-gray-900 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => setSelectedTask(task)}
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <h3 className="font-medium text-gray-900 dark:text-white flex-1 mr-2">
+                    {task.name}
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    {task.priority && (
+                      <span
+                        className="px-2 py-1 text-xs rounded-full"
+                        style={{ backgroundColor: task.priority.color + '20', color: task.priority.color }}
+                      >
+                        {getPriorityLabel(task.priority)}
+                      </span>
+                    )}
+                    <span
+                      className="px-2 py-1 text-xs rounded-full"
+                      style={{ backgroundColor: task.status.color + '20', color: task.status.color }}
+                    >
+                      {task.status.status}
+                    </span>
+                  </div>
+                </div>
+                
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
+                  {task.description || 'Sin descripción'}
+                </p>
+                
+                <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500">
+                  <span>📅 {task.due_date ? formatDate(task.due_date) : 'Fecha por definir'}</span>
+                </div>
+              </div>
+            ))}
+
+            {filteredTasks.length === 0 && (
+              <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                <p>No hay tareas que coincidan con los filtros seleccionados.</p>
+                <button
+                  onClick={clearFilters}
+                  className="mt-2 text-purple-500 hover:text-purple-600 text-sm cursor-pointer"
+                >
+                  Limpiar filtros
+                </button>
+              </div>
+            )}
+
+            {filteredTasks.length > visibleCount && (
+              <button
+                onClick={() => setVisibleCount(visibleCount + 12)}
+                className="w-full py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg transition-colors cursor-pointer"
+              >
+                Cargar más tareas
+              </button>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Modal para crear tarea */}
+      {showAddTaskModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 p-4">
+          <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 max-w-md w-full shadow-2xl">
+            <h2 className="text-xl font-bold mb-4">Nueva Tarea</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Nombre de la tarea</label>
+                <input
+                  type="text"
+                  value={newTaskName}
+                  onChange={(e) => setNewTaskName(e.target.value)}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Nombre de la tarea"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-2">Descripción (opcional)</label>
+                <textarea
+                  value={newTaskDescription}
+                  onChange={(e) => setNewTaskDescription(e.target.value)}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  rows={3}
+                  placeholder="Descripción de la tarea"
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2 h-5">Fecha límite (opcional)</label>
+                  <input
+                    type="date"
+                    value={newTaskDate}
+                    onChange={(e) => setNewTaskDate(e.target.value)}
+                    className="w-full h-10 p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-left"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2 h-5">Prioridad</label>
+                  <select
+                    value={newTaskPriority}
+                    onChange={(e) => setNewTaskPriority(Number(e.target.value))}
+                    className="w-full h-10 p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value={1}>Urgente</option>
+                    <option value={2}>Alta</option>
+                    <option value={3}>Normal</option>
+                    <option value={4}>Baja</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleCreateTask}
+                disabled={isCreatingTask || !newTaskName.trim()}
+                className="flex-1 px-4 py-3 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
+              >
+                {isCreatingTask ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></div>
+                  </>
+                ) : (
+                  'Crear Tarea'
+                )}
+              </button>
+              <button
+                onClick={() => {
+                  setShowAddTaskModal(false);
+                  setNewTaskName('');
+                  setNewTaskDescription('');
+                  setNewTaskDate('');
+                  setNewTaskPriority(3);
+                }}
+                disabled={isCreatingTask}
+                className="px-6 py-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
         </div>
       )}
+
+      {/* Modal para ver detalles de tarea */}
+      {selectedTask && !isEditingTask && (
+        <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 p-4" onClick={() => setSelectedTask(null)}>
+          <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 max-w-2xl w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-start mb-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <h2 className="text-2xl font-bold">{selectedTask.name}</h2>
+                  <button
+                    onClick={() => startEditingTask(selectedTask)}
+                    className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 cursor-pointer p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    title="Editar tarea"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="flex items-center gap-2">
+                  {selectedTask.priority && (
+                    <span
+                      className="px-2 py-1 text-xs rounded-full"
+                      style={{ backgroundColor: selectedTask.priority.color + '20', color: selectedTask.priority.color }}
+                    >
+                      {getPriorityLabel(selectedTask.priority)}
+                    </span>
+                  )}
+                  <span
+                    className="px-2 py-1 text-xs rounded-full"
+                    style={{ backgroundColor: selectedTask.status.color + '20', color: selectedTask.status.color }}
+                  >
+                    {selectedTask.status.status}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedTask(null)}
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer ml-4"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <h3 className="font-medium mb-2">Descripción</h3>
+              <p className="text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
+                {selectedTask.description || 'Sin descripción'}
+              </p>
+            </div>
+            
+            <div className="space-y-2 mb-6">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">📅 Fecha límite:</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {selectedTask.due_date ? formatDate(selectedTask.due_date) : 'Fecha por definir'}
+                </span>
+              </div>
+              
+              {selectedTask.assignees.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">👤 Asignado a:</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">{selectedTask.assignees[0].username}</span>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex gap-3">
+              <a
+                href={selectedTask.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors text-center cursor-pointer"
+              >
+                Abrir en ClickUp
+              </a>
+              <button
+                onClick={() => setSelectedTask(null)}
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Modal para editar tarea */}
+      {selectedTask && isEditingTask && (
+        <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 p-4" onClick={() => {setIsEditingTask(false); setSelectedTask(null);}}>
+          <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 max-w-2xl w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+            <h2 className="text-xl font-bold mb-4">Editar Tarea</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Nombre de la tarea</label>
+                <input
+                  type="text"
+                  value={editTaskName}
+                  onChange={(e) => setEditTaskName(e.target.value)}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Nombre de la tarea"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-2">Descripción</label>
+                <textarea
+                  value={editTaskDescription}
+                  onChange={(e) => setEditTaskDescription(e.target.value)}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  rows={3}
+                  placeholder="Descripción de la tarea"
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2 h-5">Fecha límite</label>
+                  <input
+                    type="date"
+                    value={editTaskDate}
+                    onChange={(e) => setEditTaskDate(e.target.value)}
+                    className="w-full h-10 p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-left"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2 h-5">Prioridad</label>
+                  <select
+                    value={editTaskPriority}
+                    onChange={(e) => setEditTaskPriority(Number(e.target.value))}
+                    className="w-full h-10 p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value={1}>Urgente</option>
+                    <option value={2}>Alta</option>
+                    <option value={3}>Normal</option>
+                    <option value={4}>Baja</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            {error && (
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg mb-4">
+                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+              </div>
+            )}
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleUpdateTask}
+                disabled={isUpdatingTask || !editTaskName.trim()}
+                className="flex-1 px-4 py-3 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
+              >
+                {isUpdatingTask ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></div>
+                  </>
+                ) : (
+                  'Guardar Cambios'
+                )}
+              </button>
+              <button
+                onClick={() => {
+                  setIsEditingTask(false);
+                  setSelectedTask(null);
+                  setError(null);
+                }}
+                disabled={isUpdatingTask}
+                className="px-6 py-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
