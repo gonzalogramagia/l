@@ -59,6 +59,11 @@ export default function ClickUpPage() {
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isEditingTask, setIsEditingTask] = useState(false);
+  const [showSorting, setShowSorting] = useState(false);
+  const [sortBy, setSortBy] = useState<{ field: 'due_date' | 'status' | 'priority' | 'name'; order: 'asc' | 'desc' }>({ 
+    field: 'due_date', 
+    order: 'asc' 
+  });
   const [editTaskName, setEditTaskName] = useState('');
   const [editTaskDescription, setEditTaskDescription] = useState('');
   const [editTaskDate, setEditTaskDate] = useState<string>('');
@@ -178,6 +183,53 @@ export default function ClickUpPage() {
     }).replace(/^./, str => str.toUpperCase());
   };
 
+  // Función para ordenar tareas
+  const sortTasks = (tasks: Task[]) => {
+    return [...tasks].sort((a, b) => {
+      // Manejar el caso especial para fechas (poner sin fecha al final)
+      if (sortBy.field === 'due_date') {
+        // Si ambos tienen fecha, comparar normalmente
+        if (a.due_date && b.due_date) {
+          const aDate = parseInt(a.due_date);
+          const bDate = parseInt(b.due_date);
+          return sortBy.order === 'asc' ? aDate - bDate : bDate - aDate;
+        }
+        // Si solo 'a' no tiene fecha, 'a' va al final
+        if (!a.due_date) return 1;
+        // Si solo 'b' no tiene fecha, 'b' va al final
+        if (!b.due_date) return -1;
+      }
+
+      let aValue: any;
+      let bValue: any;
+
+      switch (sortBy.field) {
+        case 'due_date':
+          // Este caso ya se maneja arriba, pero lo dejamos por completitud
+          aValue = parseInt(a.due_date!);
+          bValue = parseInt(b.due_date!);
+          break;
+        case 'status':
+          aValue = a.status.status;
+          bValue = b.status.status;
+          break;
+        case 'priority':
+          aValue = a.priority ? parseInt(a.priority.priority) : 5; // Sin prioridad al final
+          bValue = b.priority ? parseInt(b.priority.priority) : 5;
+          break;
+        case 'name':
+        default:
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+      }
+
+      if (aValue < bValue) return sortBy.order === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortBy.order === 'asc' ? 1 : -1;
+      return 0;
+    });
+  };
+
   const filteredTasks = (tasks || []).filter((task) => {
     // Filtro básico (all/pending/completed)
     if (filter === 'completed') {
@@ -249,6 +301,9 @@ export default function ClickUpPage() {
 
     return true;
   });
+
+  // Aplicar ordenamiento a las tareas filtradas
+  const sortedFilteredTasks = sortTasks(filteredTasks);
 
   const pendingCount = (tasks || []).filter((task) => 
     !task.status.status.toLowerCase().includes('complete') && 
@@ -507,27 +562,67 @@ export default function ClickUpPage() {
       ) : (
         <>
 
-          {/* Filtros */}
+          {/* Filtros y Ordenamiento */}
           <div className="px-4 lg:px-0 max-w-xl mx-auto mb-6">
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className="px-3 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md text-sm transition-colors cursor-pointer"
               >
                 {showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
               </button>
+              
+              <button
+                onClick={() => setShowSorting(!showSorting)}
+                className="px-3 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md text-sm transition-colors cursor-pointer"
+              >
+                {showSorting ? 'Ocultar ' : 'Mostrar '}Orden
+              </button>
+              
               <button
                 onClick={() => setShowAddTaskModal(true)}
-                className="px-3 py-1 bg-purple-500 hover:bg-purple-600 text-white rounded-md text-sm transition-colors cursor-pointer"
+                className="px-3 py-1 bg-purple-500 hover:bg-purple-600 text-white rounded-md text-sm transition-colors cursor-pointer ml-auto"
               >
                 + Nueva Tarea
               </button>
             </div>
 
-            {/* Filtros refinados */}
+            {/* Opciones de ordenamiento */}
+            {showSorting && (
+              <div className="w-full mt-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3">
+                <h3 className="font-medium text-sm mb-2">Ordenar por:</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium mb-1">Campo</label>
+                    <select
+                      value={sortBy.field}
+                      onChange={(e) => setSortBy({...sortBy, field: e.target.value as any})}
+                      className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700"
+                    >
+                      <option value="due_date">Fecha de vencimiento</option>
+                      <option value="status">Estado</option>
+                      <option value="priority">Prioridad</option>
+                      <option value="name">Nombre</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium mb-1">Orden</label>
+                    <select
+                      value={sortBy.order}
+                      onChange={(e) => setSortBy({...sortBy, order: e.target.value as 'asc' | 'desc'})}
+                      className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700"
+                    >
+                      <option value="asc">Ascendente (A-Z, 1-9, Antiguo-Nuevo)</option>
+                      <option value="desc">Descendente (Z-A, 9-1, Nuevo-Antiguo)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Primera fila: Por Estado, Por Prioridad, Por Fecha */}
             {showFilters && (
-              <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-4">
-                {/* Primera fila: Por Estado, Por Prioridad, Por Fecha */}
+              <div className="w-full mt-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* Filtro por estado */}
                   <div className="flex flex-col">
@@ -611,7 +706,7 @@ export default function ClickUpPage() {
 
           {/* Lista de tareas */}
           <div className="px-4 lg:px-0 max-w-xl mx-auto space-y-3">
-            {filteredTasks.slice(0, visibleCount).map((task) => (
+            {sortedFilteredTasks.slice(0, visibleCount).map((task) => (
               <div
                 key={task.id}
                 className="bg-white dark:bg-gray-900 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
@@ -649,7 +744,7 @@ export default function ClickUpPage() {
               </div>
             ))}
 
-            {filteredTasks.length === 0 && (
+            {sortedFilteredTasks.length === 0 && (
               <div className="text-center py-12 text-gray-500 dark:text-gray-400">
                 <p>No hay tareas que coincidan con los filtros seleccionados.</p>
                 <button
@@ -661,7 +756,7 @@ export default function ClickUpPage() {
               </div>
             )}
 
-            {filteredTasks.length > visibleCount && (
+            {sortedFilteredTasks.length > visibleCount && (
               <button
                 onClick={() => setVisibleCount(visibleCount + 12)}
                 className="w-full py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg transition-colors cursor-pointer"
@@ -779,7 +874,7 @@ export default function ClickUpPage() {
                     </svg>
                   </button>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mb-4">
                   {selectedTask.priority && (
                     <span
                       className="px-2 py-1 text-xs rounded-full"
@@ -788,12 +883,94 @@ export default function ClickUpPage() {
                       {getPriorityLabel(selectedTask.priority)}
                     </span>
                   )}
-                  <span
-                    className="px-2 py-1 text-xs rounded-full"
-                    style={{ backgroundColor: selectedTask.status.color + '20', color: selectedTask.status.color }}
-                  >
-                    {selectedTask.status.status}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={selectedTask.status.status}
+                      onChange={async (e) => {
+                        try {
+                          const pwd = sessionStorage.getItem('clickup_password');
+                          if (!pwd) throw new Error('Sesión expirada');
+                          
+                          const response = await fetch('/api/clickup/update-task', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              password: pwd,
+                              taskId: selectedTask.id,
+                              status: e.target.value
+                            })
+                          });
+                          
+                          if (!response.ok) throw new Error('Error al actualizar el estado');
+                          
+                          // Actualizar el estado local
+                          setTasks(prev => prev.map(task => 
+                            task.id === selectedTask.id 
+                              ? { ...task, status: { ...task.status, status: e.target.value } } 
+                              : task
+                          ));
+                          
+                          // Actualizar la tarea seleccionada
+                          setSelectedTask({
+                            ...selectedTask,
+                            status: { ...selectedTask.status, status: e.target.value }
+                          });
+                          
+                        } catch (err) {
+                          setError(err instanceof Error ? err.message : 'Error al actualizar el estado');
+                        }
+                      }}
+                      className="px-2 py-1 text-xs rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 cursor-pointer"
+                      style={{ color: selectedTask.status.color }}
+                    >
+                      {uniqueStatuses.map(status => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        if (confirm('¿Estás seguro de que deseas eliminar esta tarea?')) {
+                          try {
+                            const pwd = sessionStorage.getItem('clickup_password');
+                            if (!pwd) throw new Error('Sesión expirada');
+                            
+                            const response = await fetch('/api/clickup/delete-task', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                password: pwd,
+                                taskId: selectedTask.id
+                              })
+                            });
+                            
+                            if (!response.ok) throw new Error('Error al eliminar la tarea');
+                            
+                            // Actualizar el estado local
+                            setTasks(prev => prev.filter(task => task.id !== selectedTask.id));
+                            setSelectedTask(null);
+                            
+                          } catch (err) {
+                            setError(err instanceof Error ? err.message : 'Error al eliminar la tarea');
+                          }
+                        }
+                      }}
+                      className="p-1.5 rounded-full transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer group"
+                      title="Eliminar tarea"
+                    >
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 transition-colors duration-200" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
               <button
@@ -819,12 +996,6 @@ export default function ClickUpPage() {
                 </span>
               </div>
               
-              {selectedTask.assignees.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">👤 Asignado a:</span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">{selectedTask.assignees[0].username}</span>
-                </div>
-              )}
             </div>
             
             <div className="flex gap-3">
