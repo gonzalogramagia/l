@@ -25,7 +25,10 @@ export default function ClickUpPage() {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [dateFilter, setDateFilter] = useState<'all' | 'with-date' | 'no-date'>('all');
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(() => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  });
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -177,6 +180,9 @@ export default function ClickUpPage() {
   };
 
   const filteredTasks = (tasks || []).filter((task) => {
+    // Filtro: excluir tareas sin fecha definida
+    if (!task.due_date) return false;
+    
     // Filtro básico (all/pending/completed)
     if (filter === 'completed') {
       const isCompleted = task.status.status.toLowerCase().includes('complete') || 

@@ -58,9 +58,13 @@ export default function TaskFilters({
           />
         </div>
         <div className="flex flex-col">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5">
-            Por fecha exacta
-          </label>
+              <label 
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5 cursor-pointer hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                onClick={() => setSelectedDate(null)}
+                title="Hacer clic para limpiar el filtro de fecha"
+              >
+                Buscar por fecha exacta
+              </label>
           <input
             type="date"
             value={selectedDate || ''}
@@ -120,7 +124,7 @@ export default function TaskFilters({
             </div>
             <div className="flex flex-col">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5">
-                De manera
+                Ordenar de manera
               </label>
               <select
                 value={sortBy.order}
@@ -142,7 +146,7 @@ export default function TaskFilters({
             {/* Filtro por estado */}
             <div className="flex flex-col">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5">
-                Por estado
+                Filtrar por estado
               </label>
                     <select
                       value={statusFilter}
@@ -159,7 +163,7 @@ export default function TaskFilters({
             {/* Filtro por prioridad */}
             <div className="flex flex-col">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5">
-                Por prioridad
+                Filtrar por prioridad
               </label>
               <select
                 value={priorityFilter}
