@@ -144,16 +144,16 @@ export default function TaskFilters({
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5">
                 Por estado
               </label>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full h-10 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer"
-              >
-                <option value="all">Todos los estados</option>
-                {uniqueStatuses.map(status => (
-                  <option key={status} value={status}>{status}</option>
-                ))}
-              </select>
+                    <select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      className="w-full h-10 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer"
+                    >
+                      <option value="all">Todos los estados</option>
+                      {uniqueStatuses.map(status => (
+                        <option key={status} value={status}>{status}</option>
+                      ))}
+                    </select>
             </div>
 
             {/* Filtro por prioridad */}

@@ -72,7 +72,7 @@ export default function TaskDetailsModal({
                 >
                   <svg 
                     xmlns="http://www.w3.org/2000/svg" 
-                    className="h-4 w-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 transition-colors duration-200" 
+                    className="h-5 w-5 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 transition-colors duration-200" 
                     fill="none" 
                     viewBox="0 0 24 24" 
                     stroke="currentColor"

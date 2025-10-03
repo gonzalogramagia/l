@@ -14,6 +14,7 @@ export default function ClickUpPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [user, setUser] = useState<UserData | null>(null);
   const [workspace, setWorkspace] = useState<WorkspaceData | null>(null);
+  const [availableStatuses, setAvailableStatuses] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
@@ -65,9 +66,11 @@ export default function ClickUpPage() {
       }
 
       const data = await response.json();
+      console.log('Frontend received availableStatuses:', data.availableStatuses);
       setTasks(data.tasks || []);
       setUser(data.user);
       setWorkspace(data.workspace);
+      setAvailableStatuses(data.availableStatuses || []);
       setIsAuthenticated(true);
       sessionStorage.setItem('clickup_auth', 'true');
       sessionStorage.setItem('clickup_password', pwd);
@@ -273,6 +276,19 @@ export default function ClickUpPage() {
   // Obtener estados y prioridades únicos para los filtros
   const uniqueStatuses = Array.from(new Set(tasks.map(task => task.status.status)));
   const uniquePriorities = Array.from(new Set(tasks.map(task => task.priority?.priority || 'none')));
+  
+  // Usar estados reales de ClickUp si están disponibles, sino usar estados de tareas cargadas
+  let allAvailableStatuses = availableStatuses.length > 0 ? availableStatuses : uniqueStatuses;
+  
+  // Si solo tenemos 2 estados (To Do, In Progress), agregar estados comunes de ClickUp
+  if (allAvailableStatuses.length <= 2) {
+    const commonClickUpStatuses = ['Complete', 'Done', 'Closed', 'Cancelled', 'On Hold'];
+    commonClickUpStatuses.forEach(status => {
+      if (!allAvailableStatuses.includes(status)) {
+        allAvailableStatuses.push(status);
+      }
+    });
+  }
 
   const handleCreateTask = async () => {
     if (!newTaskName.trim()) return;
@@ -467,7 +483,7 @@ export default function ClickUpPage() {
       if (!pwd) throw new Error('Sesión expirada');
       
       const response = await fetch('/api/clickup/delete-task', {
-        method: 'POST',
+        method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           password: pwd,
@@ -485,6 +501,7 @@ export default function ClickUpPage() {
       setError(err instanceof Error ? err.message : 'Error al eliminar la tarea');
     }
   };
+
 
   const handleCancelCreate = () => {
     setShowAddTaskModal(false);
@@ -557,7 +574,7 @@ return (
             setSelectedDate={setSelectedDate}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            uniqueStatuses={uniqueStatuses}
+            uniqueStatuses={allAvailableStatuses}
             uniquePriorities={uniquePriorities}
             getPriorityLabel={getPriorityLabel}
             clearFilters={clearFilters}
@@ -625,7 +642,7 @@ return (
           onEdit={startEditingTask}
           onDelete={handleDeleteTask}
           onStatusChange={handleStatusChange}
-          uniqueStatuses={uniqueStatuses}
+            uniqueStatuses={allAvailableStatuses}
           getPriorityLabel={getPriorityLabel}
           formatDate={formatDate}
         />

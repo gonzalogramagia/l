@@ -94,6 +94,31 @@ export async function POST(request: Request) {
 
     // Obtener todas las tareas de todos los espacios
     const allTasks: any[] = [];
+    const allStatuses: Set<string> = new Set();
+
+    // Obtener estados del workspace completo
+    try {
+      const workspaceResponse = await fetch(
+        `https://api.clickup.com/api/v2/team/${personalWorkspace.id}`,
+        {
+          headers: {
+            'Authorization': apiKey,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (workspaceResponse.ok) {
+        const workspaceData = await workspaceResponse.json();
+        if (workspaceData.team && workspaceData.team.statuses) {
+          workspaceData.team.statuses.forEach((status: any) => {
+            allStatuses.add(status.status);
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error obteniendo estados del workspace:', error);
+    }
 
     for (const space of spacesData.spaces) {
       // Obtener listas del espacio
@@ -124,6 +149,26 @@ export async function POST(request: Request) {
 
       // Obtener tareas de listas sin carpeta
       for (const list of listsData.lists || []) {
+        // Obtener estados de la lista
+        const listResponse = await fetch(
+          `https://api.clickup.com/api/v2/list/${list.id}`,
+          {
+            headers: {
+              'Authorization': apiKey,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        if (listResponse.ok) {
+          const listData = await listResponse.json();
+          if (listData.statuses) {
+            listData.statuses.forEach((status: any) => {
+              allStatuses.add(status.status);
+            });
+          }
+        }
+
         const tasksResponse = await fetch(
           `https://api.clickup.com/api/v2/list/${list.id}/task?archived=false`,
           {
@@ -141,6 +186,26 @@ export async function POST(request: Request) {
       // Obtener tareas de listas en carpetas
       for (const folder of foldersData.folders || []) {
         for (const list of folder.lists || []) {
+          // Obtener estados de la lista
+          const listResponse = await fetch(
+            `https://api.clickup.com/api/v2/list/${list.id}`,
+            {
+              headers: {
+                'Authorization': apiKey,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+
+          if (listResponse.ok) {
+            const listData = await listResponse.json();
+            if (listData.statuses) {
+              listData.statuses.forEach((status: any) => {
+                allStatuses.add(status.status);
+              });
+            }
+          }
+
           const tasksResponse = await fetch(
             `https://api.clickup.com/api/v2/list/${list.id}/task?archived=false`,
             {
@@ -157,10 +222,13 @@ export async function POST(request: Request) {
       }
     }
 
+    console.log('All Statuses collected:', Array.from(allStatuses));
+    
     return NextResponse.json({
       user: userData.user,
       workspace: personalWorkspace,
       tasks: allTasks,
+      availableStatuses: Array.from(allStatuses),
     });
   } catch (error) {
     console.error('Error al obtener tareas de ClickUp:', error);
