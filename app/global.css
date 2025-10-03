@@ -193,3 +193,28 @@ input[type='email'] {
 .title {
   text-wrap: balance;
 }
+
+/* Date input calendar icon styling */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  order: -1;
+  margin-right: 0.5rem;
+  margin-left: 0;
+  position: absolute;
+  left: 0.75rem;
+  width: 1rem;
+  height: 1rem;
+}
+
+input[type="date"] {
+  display: flex;
+  flex-direction: row-reverse;
+  padding-right: 0;
+  padding-left: 2rem;
+  position: relative;
+}
+
+/* Make the entire input clickable */
+input[type="date"]::-webkit-datetime-edit {
+  cursor: pointer;
+}
