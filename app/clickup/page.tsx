@@ -406,23 +406,11 @@ export default function ClickUpPage() {
         throw new Error(data.error || 'Error al actualizar la tarea');
       }
 
-      // Actualizar la tarea localmente en el estado
-      setTasks(prevTasks => 
-        prevTasks.map(task => 
-          task.id === selectedTask.id 
-            ? {
-                ...task,
-                name: editTaskName,
-                description: editTaskDescription,
-                due_date: editTaskDate ? new Date(editTaskDate).getTime().toString() : null,
-                priority: {
-                  priority: editTaskPriority.toString(),
-                  color: task.priority?.color || '#6B7280'
-                }
-              }
-            : task
-        )
-      );
+      // Recargar todas las tareas para ver los cambios reflejados
+      const password = sessionStorage.getItem('clickup_password');
+      if (password) {
+        await fetchTasks(password);
+      }
       
       // Cerrar modal de edición
       setIsEditingTask(false);

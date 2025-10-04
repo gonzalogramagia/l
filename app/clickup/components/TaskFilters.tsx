@@ -44,8 +44,8 @@ export default function TaskFilters({
   return (
     <div className="px-4 lg:px-0 max-w-xl mx-auto mb-6">
       {/* Filtros siempre visibles */}
-      <div className="space-y-4 mb-4">
-        {/* Buscador de nombre/descripción - siempre en fila completa */}
+      <div className="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4 mb-4">
+        {/* Buscador de nombre/descripción */}
         <div className="flex flex-col">
           <label 
             className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5 cursor-pointer hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
@@ -69,7 +69,7 @@ export default function TaskFilters({
           />
         </div>
         
-        {/* Buscador de fecha - siempre en fila completa */}
+        {/* Buscador de fecha */}
         <div className="flex flex-col">
           <label 
             className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5 cursor-pointer hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
@@ -132,7 +132,7 @@ export default function TaskFilters({
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-2">
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
         <div className="flex gap-2">
           <button
             onClick={() => {

@@ -127,7 +127,8 @@ export default function CreateTaskModal({
           >
             {isCreatingTask ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto mb-2"></div>
+                <span className="text-xs">Creando... (puede tardar varios segundos)</span>
               </>
             ) : (
               'Crear Tarea'

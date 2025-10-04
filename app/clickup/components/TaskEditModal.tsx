@@ -49,7 +49,7 @@ export default function TaskEditModal({
         
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Nombre de la tarea</label>
+            <label className="block text-sm font-medium mb-2">Nombre de la tarea *</label>
             <input
               type="text"
               value={editTaskName}
@@ -72,7 +72,7 @@ export default function TaskEditModal({
           
           <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
             <div>
-              <label className="block text-sm font-medium mb-2 h-5">Fecha límite</label>
+              <label className="block text-sm font-medium mb-2 h-5">Fecha límite *</label>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => {
@@ -141,12 +141,13 @@ export default function TaskEditModal({
         <div className="flex gap-3 mt-6">
           <button
             onClick={onSave}
-            disabled={isUpdatingTask || !editTaskName.trim()}
+            disabled={isUpdatingTask || !editTaskName.trim() || !editTaskDescription.trim() || !editTaskDate || !editTaskPriority}
             className="flex-1 px-4 py-3 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
           >
             {isUpdatingTask ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto mb-2"></div>
+                <span className="text-xs">Actualizando... (puede tardar varios segundos)</span>
               </>
             ) : (
               'Guardar Cambios'
