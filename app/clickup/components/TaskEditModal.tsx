@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface TaskEditModalProps {
   selectedTask: {
     id: string;
@@ -23,6 +25,11 @@ interface TaskEditModalProps {
   onCancel: () => void;
   uniquePriorities: string[];
   getPriorityLabel: (priority: any) => string;
+  editTaskListId: string;
+  setEditTaskListId: (listId: string) => void;
+  editTaskFolderId: string;
+  setEditTaskFolderId: (folderId: string) => void;
+  availableLists: any[];
 }
 
 export default function TaskEditModal({
@@ -40,8 +47,34 @@ export default function TaskEditModal({
   onSave,
   onCancel,
   uniquePriorities,
-  getPriorityLabel
+  getPriorityLabel,
+  editTaskListId,
+  setEditTaskListId,
+  editTaskFolderId,
+  setEditTaskFolderId,
+  availableLists
 }: TaskEditModalProps) {
+  console.log('TaskEditModal - availableLists:', availableLists);
+  
+  // Auto-seleccionar "Personal" y "Organizacion" por defecto
+  React.useEffect(() => {
+    if (availableLists.length > 0) {
+      // Buscar el espacio "Personal"
+      const personalSpace = availableLists.find(list => list.space_name === 'Personal');
+      if (personalSpace && !editTaskFolderId) {
+        setEditTaskFolderId(personalSpace.space_id);
+      }
+      
+      // Buscar la lista "Organización" dentro del espacio Personal
+      const organizacionList = availableLists.find(list => 
+        list.space_name === 'Personal' && list.name === 'Organización'
+      );
+      if (organizacionList && !editTaskListId) {
+        setEditTaskListId(organizacionList.id);
+      }
+    }
+  }, [availableLists, editTaskFolderId, editTaskListId, setEditTaskFolderId, setEditTaskListId]);
+  
   return (
     <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 p-4" onClick={onCancel}>
       <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 max-w-3xl w-full shadow-2xl" onClick={e => e.stopPropagation()}>
@@ -81,6 +114,12 @@ export default function TaskEditModal({
                       const previousDay = new Date(currentDate);
                       previousDay.setDate(currentDate.getDate() - 1);
                       setEditTaskDate(previousDay.toISOString().split('T')[0]);
+                    } else {
+                      // Si no hay fecha seleccionada, usar el día actual
+                      const today = new Date();
+                      const previousDay = new Date(today);
+                      previousDay.setDate(today.getDate() - 1);
+                      setEditTaskDate(previousDay.toISOString().split('T')[0]);
                     }
                   }}
                   className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer flex-shrink-0"
@@ -102,6 +141,12 @@ export default function TaskEditModal({
                       const currentDate = new Date(editTaskDate);
                       const nextDay = new Date(currentDate);
                       nextDay.setDate(currentDate.getDate() + 1);
+                      setEditTaskDate(nextDay.toISOString().split('T')[0]);
+                    } else {
+                      // Si no hay fecha seleccionada, usar el día actual
+                      const today = new Date();
+                      const nextDay = new Date(today);
+                      nextDay.setDate(today.getDate() + 1);
                       setEditTaskDate(nextDay.toISOString().split('T')[0]);
                     }
                   }}
@@ -132,6 +177,50 @@ export default function TaskEditModal({
           </div>
         </div>
         
+        {/* Selectores de Espacio y Lista */}
+        <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
+          {/* Selector de Espacio */}
+          <div>
+            <label className="block text-sm font-medium mb-2 mt-3">Espacio *</label>
+            <select
+              value={editTaskFolderId}
+              onChange={(e) => {
+                setEditTaskFolderId(e.target.value);
+                setEditTaskListId(''); // Limpiar lista cuando cambie espacio
+              }}
+              className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              <option value="">Seleccionar espacio...</option>
+              {Array.from(new Set(availableLists.filter(list => list.space_id && list.space_name).map(list => list.space_name))).map(spaceName => {
+                const space = availableLists.find(list => list.space_name === spaceName);
+                return (
+                  <option key={space?.space_id} value={space?.space_id}>
+                    {spaceName}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          
+          {/* Selector de Lista */}
+          <div>
+            <label className="block text-sm font-medium mb-2 sm:mt-3">Lista *</label>
+            <select
+              value={editTaskListId}
+              onChange={(e) => setEditTaskListId(e.target.value)}
+              disabled={!editTaskFolderId}
+              className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
+            >
+              <option value="">Seleccionar lista...</option>
+              {availableLists.filter(list => list.space_id === editTaskFolderId).map(list => (
+                <option key={list.id} value={list.id}>
+                  {list.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        
         {error && (
           <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg mb-4">
             <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
@@ -141,7 +230,7 @@ export default function TaskEditModal({
         <div className="flex gap-3 mt-6">
           <button
             onClick={onSave}
-            disabled={isUpdatingTask || !editTaskName.trim() || !editTaskDescription.trim() || !editTaskDate || !editTaskPriority}
+            disabled={isUpdatingTask || !editTaskName.trim() || !editTaskDescription.trim() || !editTaskDate || !editTaskPriority || !editTaskFolderId || !editTaskListId}
             className="flex-1 px-4 py-3 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
           >
             {isUpdatingTask ? (

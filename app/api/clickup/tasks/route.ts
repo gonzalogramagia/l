@@ -95,6 +95,7 @@ export async function POST(request: Request) {
     // Obtener todas las tareas de todos los espacios
     const allTasks: any[] = [];
     const allStatuses: Set<string> = new Set();
+    const allLists: any[] = [];
 
     // Obtener estados del workspace completo
     try {
@@ -149,6 +150,14 @@ export async function POST(request: Request) {
 
       // Obtener tareas de listas sin carpeta
       for (const list of listsData.lists || []) {
+        // Agregar lista a la colección
+        allLists.push({
+          id: list.id,
+          name: list.name,
+          folder_id: null,
+          space_id: space.id,
+          space_name: space.name
+        });
         // Obtener estados de la lista
         const listResponse = await fetch(
           `https://api.clickup.com/api/v2/list/${list.id}`,
@@ -186,6 +195,15 @@ export async function POST(request: Request) {
       // Obtener tareas de listas en carpetas
       for (const folder of foldersData.folders || []) {
         for (const list of folder.lists || []) {
+          // Agregar lista a la colección
+          allLists.push({
+            id: list.id,
+            name: list.name,
+            folder_id: folder.id,
+            folder_name: folder.name,
+            space_id: space.id,
+            space_name: space.name
+          });
           // Obtener estados de la lista
           const listResponse = await fetch(
             `https://api.clickup.com/api/v2/list/${list.id}`,
@@ -229,6 +247,7 @@ export async function POST(request: Request) {
       workspace: personalWorkspace,
       tasks: allTasks,
       availableStatuses: Array.from(allStatuses),
+      availableLists: allLists,
     });
   } catch (error) {
     console.error('Error al obtener tareas de ClickUp:', error);

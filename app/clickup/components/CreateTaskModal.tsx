@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface CreateTaskModalProps {
   newTaskName: string;
   setNewTaskName: (name: string) => void;
@@ -12,6 +14,11 @@ interface CreateTaskModalProps {
   onCancel: () => void;
   uniquePriorities: string[];
   getPriorityLabel: (priority: any) => string;
+  newTaskListId: string;
+  setNewTaskListId: (listId: string) => void;
+  newTaskFolderId: string;
+  setNewTaskFolderId: (folderId: string) => void;
+  availableLists: any[];
 }
 
 export default function CreateTaskModal({
@@ -27,8 +34,34 @@ export default function CreateTaskModal({
   onCreateTask,
   onCancel,
   uniquePriorities,
-  getPriorityLabel
+  getPriorityLabel,
+  newTaskListId,
+  setNewTaskListId,
+  newTaskFolderId,
+  setNewTaskFolderId,
+  availableLists
 }: CreateTaskModalProps) {
+  console.log('CreateTaskModal - availableLists:', availableLists);
+  
+  // Auto-seleccionar "Personal" y "Organizacion" por defecto
+  React.useEffect(() => {
+    if (availableLists.length > 0) {
+      // Buscar el espacio "Personal"
+      const personalSpace = availableLists.find(list => list.space_name === 'Personal');
+      if (personalSpace && !newTaskFolderId) {
+        setNewTaskFolderId(personalSpace.space_id);
+      }
+      
+      // Buscar la lista "Organización" dentro del espacio Personal
+      const organizacionList = availableLists.find(list => 
+        list.space_name === 'Personal' && list.name === 'Organización'
+      );
+      if (organizacionList && !newTaskListId) {
+        setNewTaskListId(organizacionList.id);
+      }
+    }
+  }, [availableLists, newTaskFolderId, newTaskListId, setNewTaskFolderId, setNewTaskListId]);
+  
   return (
     <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 p-4">
       <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 max-w-3xl w-full shadow-2xl">
@@ -68,6 +101,12 @@ export default function CreateTaskModal({
                       const previousDay = new Date(currentDate);
                       previousDay.setDate(currentDate.getDate() - 1);
                       setNewTaskDate(previousDay.toISOString().split('T')[0]);
+                    } else {
+                      // Si no hay fecha seleccionada, usar el día actual
+                      const today = new Date();
+                      const previousDay = new Date(today);
+                      previousDay.setDate(today.getDate() - 1);
+                      setNewTaskDate(previousDay.toISOString().split('T')[0]);
                     }
                   }}
                   className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer flex-shrink-0"
@@ -89,6 +128,12 @@ export default function CreateTaskModal({
                       const currentDate = new Date(newTaskDate);
                       const nextDay = new Date(currentDate);
                       nextDay.setDate(currentDate.getDate() + 1);
+                      setNewTaskDate(nextDay.toISOString().split('T')[0]);
+                    } else {
+                      // Si no hay fecha seleccionada, usar el día actual
+                      const today = new Date();
+                      const nextDay = new Date(today);
+                      nextDay.setDate(today.getDate() + 1);
                       setNewTaskDate(nextDay.toISOString().split('T')[0]);
                     }
                   }}
@@ -119,10 +164,54 @@ export default function CreateTaskModal({
           </div>
         </div>
         
+        {/* Selectores de Espacio y Lista */}
+        <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
+          {/* Selector de Espacio */}
+          <div>
+            <label className="block text-sm font-medium mb-2 mt-3">Espacio *</label>
+            <select
+              value={newTaskFolderId}
+              onChange={(e) => {
+                setNewTaskFolderId(e.target.value);
+                setNewTaskListId(''); // Limpiar lista cuando cambie espacio
+              }}
+              className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              <option value="">Seleccionar espacio...</option>
+              {Array.from(new Set(availableLists.filter(list => list.space_id && list.space_name).map(list => list.space_name))).map(spaceName => {
+                const space = availableLists.find(list => list.space_name === spaceName);
+                return (
+                  <option key={space?.space_id} value={space?.space_id}>
+                    {spaceName}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          
+          {/* Selector de Lista */}
+          <div>
+            <label className="block text-sm font-medium mb-2 sm:mt-3">Lista *</label>
+            <select
+              value={newTaskListId}
+              onChange={(e) => setNewTaskListId(e.target.value)}
+              disabled={!newTaskFolderId}
+              className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
+            >
+              <option value="">Seleccionar lista...</option>
+              {availableLists.filter(list => list.space_id === newTaskFolderId).map(list => (
+                <option key={list.id} value={list.id}>
+                  {list.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        
         <div className="flex gap-3 mt-6">
           <button
             onClick={onCreateTask}
-            disabled={isCreatingTask || !newTaskName.trim() || !newTaskDate}
+            disabled={isCreatingTask || !newTaskName.trim() || !newTaskDate || !newTaskFolderId || !newTaskListId}
             className="flex-1 px-4 py-3 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
           >
             {isCreatingTask ? (

@@ -8,13 +8,14 @@ import TaskCard from './components/TaskCard';
 import TaskDetailsModal from './components/TaskDetailsModal';
 import TaskEditModal from './components/TaskEditModal';
 import CreateTaskModal from './components/CreateTaskModal';
-import { Task, UserData, WorkspaceData } from './types';
+import { Task, UserData, WorkspaceData, ListData } from './types';
 
 export default function ClickUpPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [user, setUser] = useState<UserData | null>(null);
   const [workspace, setWorkspace] = useState<WorkspaceData | null>(null);
   const [availableStatuses, setAvailableStatuses] = useState<string[]>([]);
+  const [availableLists, setAvailableLists] = useState<ListData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
@@ -49,6 +50,8 @@ export default function ClickUpPage() {
   const [newTaskDescription, setNewTaskDescription] = useState('');
   const [newTaskDate, setNewTaskDate] = useState<string>('');
   const [newTaskPriority, setNewTaskPriority] = useState<number>(3);
+  const [newTaskListId, setNewTaskListId] = useState<string>('');
+  const [newTaskFolderId, setNewTaskFolderId] = useState<string>('');
   const [isCreatingTask, setIsCreatingTask] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isEditingTask, setIsEditingTask] = useState(false);
@@ -61,6 +64,8 @@ export default function ClickUpPage() {
   const [editTaskDescription, setEditTaskDescription] = useState('');
   const [editTaskDate, setEditTaskDate] = useState<string>('');
   const [editTaskPriority, setEditTaskPriority] = useState<number>(3);
+  const [editTaskListId, setEditTaskListId] = useState<string>('');
+  const [editTaskFolderId, setEditTaskFolderId] = useState<string>('');
   const [isUpdatingTask, setIsUpdatingTask] = useState(false);
 
   const fetchTasks = async (pwd: string) => {
@@ -86,6 +91,8 @@ export default function ClickUpPage() {
       setUser(data.user);
       setWorkspace(data.workspace);
       setAvailableStatuses(data.availableStatuses || []);
+      setAvailableLists(data.availableLists || []);
+        console.log('Frontend received availableLists:', data.availableLists);
       setIsAuthenticated(true);
       sessionStorage.setItem('clickup_auth', 'true');
       sessionStorage.setItem('clickup_password', pwd);
@@ -335,6 +342,7 @@ export default function ClickUpPage() {
           description: newTaskDescription,
           dueDate: newTaskDate,
           priority: newTaskPriority,
+          listId: newTaskListId,
         }),
       });
 
@@ -351,6 +359,8 @@ export default function ClickUpPage() {
         setNewTaskDescription('');
         setNewTaskDate('');
         setNewTaskPriority(3);
+        setNewTaskListId('');
+        setNewTaskFolderId('');
       setShowAddTaskModal(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al crear la tarea');
@@ -396,6 +406,7 @@ export default function ClickUpPage() {
           description: editTaskDescription,
           dueDate: editTaskDate,
           priority: editTaskPriority,
+          listId: editTaskListId,
         }),
       });
 
@@ -447,6 +458,11 @@ export default function ClickUpPage() {
     // Manejar la prioridad de manera más segura
     const priorityValue = task.priority?.priority ? parseInt(task.priority.priority) : 3;
     setEditTaskPriority(isNaN(priorityValue) ? 3 : priorityValue);
+    
+    // Inicializar lista y carpeta basado en la tarea seleccionada
+    // Por ahora usamos valores por defecto, pero se puede obtener de la tarea si está disponible
+    setEditTaskListId('');
+    setEditTaskFolderId('');
     
     setIsEditingTask(true);
   };
@@ -515,11 +531,11 @@ export default function ClickUpPage() {
 
 
   const handleCancelCreate = () => {
-    setShowAddTaskModal(false);
-    setNewTaskName('');
-    setNewTaskDescription('');
-    setNewTaskDate('');
-    setNewTaskPriority(3);
+                  setShowAddTaskModal(false);
+                  setNewTaskName('');
+                  setNewTaskDescription('');
+                  setNewTaskDate('');
+                  setNewTaskPriority(3);
   };
 
   const handleCancelEdit = () => {
@@ -553,7 +569,7 @@ export default function ClickUpPage() {
           isAuthenticating={isAuthenticating}
           error={error}
         />
-    </div>
+                  </div>
   );
 }
 
@@ -566,8 +582,8 @@ return (
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-white mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-gray-400">Cargando tareas...</p>
-          </div>
-        </div>
+                        </div>
+                      </div>
       ) : (
         <>
           <TaskFilters
@@ -607,14 +623,14 @@ return (
             {sortedFilteredTasks.length === 0 && (
               <div className="text-center py-12 text-gray-500 dark:text-gray-400">
                 <p>No hay tareas que coincidan con los filtros seleccionados.</p>
-                <button
+              <button
                   onClick={clearFilters}
                   className="mt-2 text-purple-500 hover:text-purple-600 text-sm cursor-pointer"
-                >
+              >
                   Limpiar filtros
-                </button>
-              </div>
-            )}
+              </button>
+        </div>
+      )}
 
             {sortedFilteredTasks.length > visibleCount && (
               <button
@@ -624,7 +640,7 @@ return (
                 Cargar más tareas
               </button>
             )}
-          </div>
+            </div>
         </>
       )}
 
@@ -639,11 +655,16 @@ return (
           setNewTaskDate={setNewTaskDate}
           newTaskPriority={newTaskPriority}
           setNewTaskPriority={setNewTaskPriority}
+          newTaskListId={newTaskListId}
+          setNewTaskListId={setNewTaskListId}
+          newTaskFolderId={newTaskFolderId}
+          setNewTaskFolderId={setNewTaskFolderId}
           isCreatingTask={isCreatingTask}
           onCreateTask={handleCreateTask}
           onCancel={handleCancelCreate}
           uniquePriorities={uniquePriorities}
           getPriorityLabel={getPriorityLabel}
+          availableLists={availableLists}
         />
       )}
 
@@ -673,12 +694,17 @@ return (
           setEditTaskDate={setEditTaskDate}
           editTaskPriority={editTaskPriority}
           setEditTaskPriority={setEditTaskPriority}
+          editTaskListId={editTaskListId}
+          setEditTaskListId={setEditTaskListId}
+          editTaskFolderId={editTaskFolderId}
+          setEditTaskFolderId={setEditTaskFolderId}
           isUpdatingTask={isUpdatingTask}
           error={error}
           onSave={handleUpdateTask}
           onCancel={handleCancelEdit}
           uniquePriorities={uniquePriorities}
           getPriorityLabel={getPriorityLabel}
+          availableLists={availableLists}
         />
       )}
     </div>

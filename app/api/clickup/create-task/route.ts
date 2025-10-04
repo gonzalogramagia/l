@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    const { password, name, description, dueDate, priority } = body;
+    const { password, name, description, dueDate, priority, listId } = body;
 
     // Verificar contraseña
     if (!password || password !== configPassword) {
@@ -128,8 +128,11 @@ export async function POST(request: Request) {
       taskData.priority = priority;
     }
 
+    // Usar la lista seleccionada o la primera disponible
+    const targetListId = listId || firstList.id;
+
     const createTaskResponse = await fetch(
-      `https://api.clickup.com/api/v2/list/${firstList.id}/task`,
+      `https://api.clickup.com/api/v2/list/${targetListId}/task`,
       {
         method: 'POST',
         headers: {

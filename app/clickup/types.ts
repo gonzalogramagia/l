@@ -27,3 +27,12 @@ export interface UserData {
 export interface WorkspaceData {
   name: string;
 }
+
+export interface ListData {
+  id: string;
+  name: string;
+  folder_id: string | null;
+  folder_name?: string;
+  space_id?: string;
+  space_name?: string;
+}

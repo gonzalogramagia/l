@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { password, taskId, name, description, dueDate, priority, status } = await request.json();
+    const { password, taskId, name, description, dueDate, priority, status, listId } = await request.json();
 
     if (!password || !taskId) {
       return NextResponse.json(
@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
     }
     if (priority !== undefined) updatePayload.priority = priority;
     if (status !== undefined) updatePayload.status = status;
+    if (listId !== undefined) updatePayload.list_id = listId;
 
     // Hacer la llamada real a la API de ClickUp
     const clickupResponse = await fetch(`https://api.clickup.com/api/v2/task/${taskId}`, {
