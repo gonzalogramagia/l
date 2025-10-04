@@ -180,7 +180,10 @@ export default function TaskEditModal({
         <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md mt-5">
           <label className="block text-sm font-medium mb-2">Ubicación actual</label>
           <div className="text-sm text-gray-600 dark:text-gray-400">
-            Información no disponible
+            {editTaskListId && availableLists.find(list => list.id === editTaskListId) ? 
+              `${availableLists.find(list => list.id === editTaskListId)?.space_name} → ${availableLists.find(list => list.id === editTaskListId)?.name}` :
+              'Información no disponible'
+            }
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
             Nota: No se puede cambiar la ubicación de tareas existentes debido a limitaciones del plan de ClickUp

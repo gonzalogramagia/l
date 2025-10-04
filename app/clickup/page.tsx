@@ -451,10 +451,22 @@ export default function ClickUpPage() {
     const priorityValue = task.priority?.priority ? parseInt(task.priority.priority) : 3;
     setEditTaskPriority(isNaN(priorityValue) ? 3 : priorityValue);
     
-    // Por ahora, usar valores por defecto ya que no tenemos información de lista en el tipo Task
-    // TODO: Modificar el API para incluir list_id en las tareas
-    setEditTaskListId('');
-    setEditTaskFolderId('');
+    // Intentar encontrar la lista real de la tarea
+    if (task.list_id) {
+      const realList = availableLists.find(list => list.id === task.list_id);
+      if (realList) {
+        setEditTaskListId(realList.id);
+        setEditTaskFolderId(realList.space_id || '');
+      } else {
+        // Si no se encuentra, usar valores por defecto
+        setEditTaskListId('');
+        setEditTaskFolderId('');
+      }
+    } else {
+      // Si no hay información de lista, usar valores por defecto
+      setEditTaskListId('');
+      setEditTaskFolderId('');
+    }
     
     setIsEditingTask(true);
   };

@@ -12,6 +12,7 @@ export interface Task {
   due_date: string | null;
   description: string;
   url: string;
+  list_id?: string;
   assignees: Array<{
     username: string;
     profilePicture?: string;
