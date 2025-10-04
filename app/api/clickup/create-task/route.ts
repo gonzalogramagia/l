@@ -125,7 +125,17 @@ export async function POST(request: Request) {
 
     // Agregar prioridad si existe
     if (priority) {
-      taskData.priority = priority;
+      // Convertir string de prioridad a número para ClickUp
+      const priorityMap: Record<string, number> = {
+        'urgent': 1,
+        'high': 2,
+        'normal': 3,
+        'low': 4
+      };
+      
+      // Si es un string, convertir a número; si ya es número, usar directamente
+      const priorityValue = typeof priority === 'string' ? priorityMap[priority] : priority;
+      taskData.priority = priorityValue;
     }
 
     // Usar la lista seleccionada o la primera disponible

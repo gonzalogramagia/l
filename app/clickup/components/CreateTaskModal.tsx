@@ -7,8 +7,8 @@ interface CreateTaskModalProps {
   setNewTaskDescription: (description: string) => void;
   newTaskDate: string;
   setNewTaskDate: (date: string) => void;
-  newTaskPriority: number;
-  setNewTaskPriority: (priority: number) => void;
+  newTaskPriority: number | string;
+  setNewTaskPriority: (priority: number | string) => void;
   isCreatingTask: boolean;
   onCreateTask: () => void;
   onCancel: () => void;
@@ -150,11 +150,16 @@ export default function CreateTaskModal({
               <label className="block text-sm font-medium mb-2 h-5">Prioridad *</label>
               <select
                 value={newTaskPriority}
-                onChange={(e) => setNewTaskPriority(Number(e.target.value))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Convertir string a número si es posible, sino mantener como string
+                  const numValue = isNaN(Number(value)) ? value : Number(value);
+                  setNewTaskPriority(numValue);
+                }}
                 className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 {uniquePriorities.filter(priority => priority !== 'none').map(priority => (
-                  <option key={priority} value={Number(priority)}>
+                  <option key={priority} value={priority}>
                     {getPriorityLabel({ priority } as any)}
                   </option>
                 ))}

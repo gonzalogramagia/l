@@ -49,7 +49,7 @@ export default function ClickUpPage() {
   const [newTaskName, setNewTaskName] = useState('');
   const [newTaskDescription, setNewTaskDescription] = useState('');
   const [newTaskDate, setNewTaskDate] = useState<string>('');
-  const [newTaskPriority, setNewTaskPriority] = useState<number>(3);
+  const [newTaskPriority, setNewTaskPriority] = useState<number | string>(3);
   const [newTaskListId, setNewTaskListId] = useState<string>('');
   const [newTaskFolderId, setNewTaskFolderId] = useState<string>('');
   const [isCreatingTask, setIsCreatingTask] = useState(false);
@@ -63,7 +63,7 @@ export default function ClickUpPage() {
   const [editTaskName, setEditTaskName] = useState('');
   const [editTaskDescription, setEditTaskDescription] = useState('');
   const [editTaskDate, setEditTaskDate] = useState<string>('');
-  const [editTaskPriority, setEditTaskPriority] = useState<number>(3);
+  const [editTaskPriority, setEditTaskPriority] = useState<number | string>(3);
   const [editTaskListId, setEditTaskListId] = useState<string>('');
   const [editTaskFolderId, setEditTaskFolderId] = useState<string>('');
   const [isUpdatingTask, setIsUpdatingTask] = useState(false);
@@ -124,13 +124,24 @@ export default function ClickUpPage() {
 
   const getPriorityLabel = (priority: Task['priority']) => {
     if (!priority) return 'Sin prioridad';
+    
+    // ClickUp usa un sistema de prioridades donde:
+    // 1 = Urgente, 2 = Alta, 3 = Normal, 4 = Baja
+    // Pero también puede venir como string
+    const priorityValue = priority.priority;
+    
     const labels: Record<string, string> = {
       '1': 'Urgente',
-      '2': 'Alta',
+      '2': 'Alta', 
       '3': 'Normal',
       '4': 'Baja',
+      'urgent': 'Urgente',
+      'high': 'Alta',
+      'normal': 'Normal',
+      'low': 'Baja'
     };
-    return labels[priority.priority] || priority.priority;
+    
+    return labels[priorityValue] || priorityValue || 'Sin prioridad';
   };
 
   const formatDate = (timestamp: string | null) => {
@@ -448,8 +459,8 @@ export default function ClickUpPage() {
     setEditTaskDate(dateValue);
     
     // Manejar la prioridad de manera más segura
-    const priorityValue = task.priority?.priority ? parseInt(task.priority.priority) : 3;
-    setEditTaskPriority(isNaN(priorityValue) ? 3 : priorityValue);
+    const priorityValue = task.priority?.priority || 'normal';
+    setEditTaskPriority(priorityValue);
     
     // Intentar encontrar la lista real de la tarea
     if (task.list_id) {

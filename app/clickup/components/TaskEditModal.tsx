@@ -17,8 +17,8 @@ interface TaskEditModalProps {
   setEditTaskDescription: (description: string) => void;
   editTaskDate: string;
   setEditTaskDate: (date: string) => void;
-  editTaskPriority: number;
-  setEditTaskPriority: (priority: number) => void;
+  editTaskPriority: number | string;
+  setEditTaskPriority: (priority: number | string) => void;
   isUpdatingTask: boolean;
   error: string | null;
   onSave: () => void;
@@ -163,11 +163,16 @@ export default function TaskEditModal({
               <label className="block text-sm font-medium mb-2 h-5">Prioridad *</label>
               <select
                 value={editTaskPriority}
-                onChange={(e) => setEditTaskPriority(Number(e.target.value))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Convertir string a número si es posible, sino mantener como string
+                  const numValue = isNaN(Number(value)) ? value : Number(value);
+                  setEditTaskPriority(numValue);
+                }}
                 className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 {uniquePriorities.filter(priority => priority !== 'none').map(priority => (
-                  <option key={priority} value={Number(priority)}>
+                  <option key={priority} value={priority}>
                     {getPriorityLabel({ priority } as any)}
                   </option>
                 ))}
@@ -180,10 +185,11 @@ export default function TaskEditModal({
         <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md mt-5">
           <label className="block text-sm font-medium mb-2">Ubicación actual</label>
           <div className="text-sm text-gray-600 dark:text-gray-400">
-            {editTaskListId && availableLists.find(list => list.id === editTaskListId) ? 
-              `${availableLists.find(list => list.id === editTaskListId)?.space_name} → ${availableLists.find(list => list.id === editTaskListId)?.name}` :
+            {editTaskListId && availableLists.find(list => list.id === editTaskListId) ? (
+              `${availableLists.find(list => list.id === editTaskListId)?.space_name} → ${availableLists.find(list => list.id === editTaskListId)?.name}`
+            ) : (
               'Información no disponible'
-            }
+            )}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
             Nota: No se puede cambiar la ubicación de tareas existentes debido a limitaciones del plan de ClickUp

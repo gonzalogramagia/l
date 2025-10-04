@@ -62,15 +62,6 @@ export default function TaskDetailsModal({
                     </option>
                   ))}
                 </select>
-                {/* Ubicación entre el estado y el icono de trash */}
-                {selectedTask.list_id && (
-                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
-                    {(() => {
-                      const list = availableLists.find(l => l.id === selectedTask.list_id);
-                      return list ? `${list.space_name} → ${list.name}` : 'Ubicación desconocida';
-                    })()}
-                  </span>
-                )}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -102,7 +93,7 @@ export default function TaskDetailsModal({
           </button>
         </div>
         
-        <div className="mb-4">
+        <div className="mb-6 -mt-4">
           <h3 className="font-medium mb-2">Descripción</h3>
           <p className="text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
             {selectedTask.description || 'Sin descripción'}
@@ -116,6 +107,17 @@ export default function TaskDetailsModal({
               {selectedTask.due_date ? formatDate(selectedTask.due_date) : 'Fecha por definir'}
             </span>
           </div>
+          {selectedTask.list_id && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">📍 Ubicación:</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {(() => {
+                  const list = availableLists.find(l => l.id === selectedTask.list_id);
+                  return list ? `${list.space_name} → ${list.name}` : 'Ubicación desconocida';
+                })()}
+              </span>
+            </div>
+          )}
         </div>
         
         <div className="flex gap-3">

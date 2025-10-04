@@ -41,15 +41,27 @@ export default function TaskCard({ task, onClick, getPriorityLabel, formatDate, 
       </p>
       
       <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
-        <span>📅 {task.due_date ? formatDate(task.due_date) : 'Fecha por definir'}</span>
+        {task.due_date ? (
+          <div>
+            <div>📅 {formatDate(task.due_date)?.split(', ')[0]}</div>
+            <div className="text-gray-400 dark:text-gray-500">{formatDate(task.due_date)?.split(', ')[1]}</div>
+          </div>
+        ) : (
+          <span>📅 Fecha por definir</span>
+        )}
         {/* Ubicación en la esquina inferior derecha */}
         {task.list_id && (
-          <span className="text-gray-400 dark:text-gray-600">
+          <div className="text-gray-400 dark:text-gray-600 text-right">
             {(() => {
               const list = availableLists.find(l => l.id === task.list_id);
-              return list ? `${list.space_name} → ${list.name}` : '';
+              return list ? (
+                <div>
+                  <div className="text-xs">{list.space_name}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-500">→ {list.name}</div>
+                </div>
+              ) : '';
             })()}
-          </span>
+          </div>
         )}
       </div>
     </div>

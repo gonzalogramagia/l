@@ -54,7 +54,19 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    if (priority !== undefined) updatePayload.priority = priority;
+    if (priority !== undefined) {
+      // Convertir string de prioridad a número para ClickUp
+      const priorityMap: Record<string, number> = {
+        'urgent': 1,
+        'high': 2,
+        'normal': 3,
+        'low': 4
+      };
+      
+      // Si es un string, convertir a número; si ya es número, usar directamente
+      const priorityValue = typeof priority === 'string' ? priorityMap[priority] : priority;
+      updatePayload.priority = priorityValue;
+    }
     if (status !== undefined) updatePayload.status = status;
     
     // Nota: El cambio de lista está deshabilitado debido a limitaciones del plan de ClickUp
