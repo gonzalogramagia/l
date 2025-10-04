@@ -544,8 +544,8 @@ export default function ClickUpPage() {
 
   const handleCancelEdit = () => {
     setIsEditingTask(false);
-    setSelectedTask(null);
     setError(null);
+    // No cerramos selectedTask para volver al modal de detalles
   };
 
   // Verificar autenticación al cargar
