@@ -130,10 +130,15 @@ export default function ClickUpPage() {
   const formatDate = (timestamp: string | null) => {
     if (!timestamp) return null;
     const date = new Date(parseInt(timestamp));
-    const formatted = date.toLocaleDateString('es-ES', {
+    
+    // Ajustar a GMT-3 (Argentina)
+    const argentinaTime = new Date(date.getTime() - (3 * 3600000));
+    
+    const formatted = argentinaTime.toLocaleDateString('es-ES', {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
+      timeZone: 'America/Argentina/Buenos_Aires'
     });
     
     // Capitalizar solo la primera letra de cada palabra, respetando acentos
@@ -649,6 +654,8 @@ return (
           isCreatingTask={isCreatingTask}
           onCreateTask={handleCreateTask}
           onCancel={handleCancelCreate}
+          uniquePriorities={uniquePriorities}
+          getPriorityLabel={getPriorityLabel}
         />
       )}
 
@@ -682,6 +689,8 @@ return (
           error={error}
           onSave={handleUpdateTask}
           onCancel={handleCancelEdit}
+          uniquePriorities={uniquePriorities}
+          getPriorityLabel={getPriorityLabel}
         />
       )}
     </div>

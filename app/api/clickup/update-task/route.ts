@@ -43,8 +43,10 @@ export async function POST(request: NextRequest) {
     if (description !== undefined) updatePayload.description = description;
     if (dueDate !== undefined) {
       if (dueDate) {
-        // Convertir fecha a timestamp en milisegundos
-        updatePayload.due_date = new Date(dueDate).getTime();
+        // Convertir fecha a timestamp en milisegundos, ajustando a GMT-3 (Argentina)
+        const date = new Date(dueDate);
+        const argentinaTime = new Date(date.getTime() + (3 * 3600000)); // Sumar 3 horas para GMT-3
+        updatePayload.due_date = argentinaTime.getTime();
       } else {
         updatePayload.due_date = null;
       }

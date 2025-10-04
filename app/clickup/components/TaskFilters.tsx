@@ -44,31 +44,40 @@ export default function TaskFilters({
   return (
     <div className="px-4 lg:px-0 max-w-xl mx-auto mb-6">
       {/* Filtros siempre visibles */}
-      <div className="grid grid-cols-4 gap-4 mb-4">
-        <div className="col-span-2 flex flex-col">
-              <label 
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5 cursor-pointer hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-                onClick={() => setSearchQuery('')}
-                title="Hacer clic para limpiar la búsqueda"
-              >
-                Buscar por nombre o descripción
-              </label>
+      <div className="space-y-4 mb-4">
+        {/* Buscador de nombre/descripción - siempre en fila completa */}
+        <div className="flex flex-col">
+          <label 
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5 cursor-pointer hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            onClick={() => setSearchQuery('')}
+            title="Hacer clic para limpiar la búsqueda"
+          >
+            Buscar por nombre o descripción
+          </label>
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              // Limpiar filtro de fecha cuando se escribe en búsqueda
+              if (e.target.value.trim() && selectedDate) {
+                setSelectedDate(null);
+              }
+            }}
             className="w-full h-10 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
             placeholder="Buscar tareas..."
           />
         </div>
-        <div className="col-span-2 flex flex-col">
-              <label 
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5 cursor-pointer hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-                onClick={() => setSelectedDate(null)}
-                title="Hacer clic para limpiar el filtro de fecha"
-              >
-                Buscar por fecha exacta
-              </label>
+        
+        {/* Buscador de fecha - siempre en fila completa */}
+        <div className="flex flex-col">
+          <label 
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5 cursor-pointer hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            onClick={() => setSelectedDate(null)}
+            title="Hacer clic para limpiar el filtro de fecha"
+          >
+            Buscar por fecha exacta
+          </label>
           <div className="flex items-center gap-1">
             <button
               onClick={() => {
@@ -76,6 +85,10 @@ export default function TaskFilters({
                 const previousDay = new Date(baseDate);
                 previousDay.setDate(baseDate.getDate() - 1);
                 setSelectedDate(previousDay.toISOString().split('T')[0]);
+                // Limpiar campo de búsqueda cuando se navega con flechitas
+                if (searchQuery.trim()) {
+                  setSearchQuery('');
+                }
               }}
               className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors cursor-pointer flex-shrink-0"
               title="Día anterior"
@@ -87,7 +100,13 @@ export default function TaskFilters({
             <input
               type="date"
               value={selectedDate || ''}
-              onChange={(e) => setSelectedDate(e.target.value || null)}
+              onChange={(e) => {
+                setSelectedDate(e.target.value || null);
+                // Limpiar campo de búsqueda cuando se selecciona una fecha
+                if (e.target.value && searchQuery.trim()) {
+                  setSearchQuery('');
+                }
+              }}
               className="flex-1 min-w-0 h-10 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer"
               style={{ cursor: 'pointer' }}
             />
@@ -97,6 +116,10 @@ export default function TaskFilters({
                 const nextDay = new Date(baseDate);
                 nextDay.setDate(baseDate.getDate() + 1);
                 setSelectedDate(nextDay.toISOString().split('T')[0]);
+                // Limpiar campo de búsqueda cuando se navega con flechitas
+                if (searchQuery.trim()) {
+                  setSearchQuery('');
+                }
               }}
               className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors cursor-pointer flex-shrink-0"
               title="Día siguiente"
@@ -109,30 +132,32 @@ export default function TaskFilters({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <button
-          onClick={() => {
-            setShowFilters(!showFilters);
-            if (!showFilters) setShowSorting(false); // Cerrar orden si se abren filtros
-          }}
-          className="px-3 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md text-sm transition-colors cursor-pointer"
-        >
-          {showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
-        </button>
-        
-        <button
-          onClick={() => {
-            setShowSorting(!showSorting);
-            if (!showSorting) setShowFilters(false); // Cerrar filtros si se abre orden
-          }}
-          className="px-3 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md text-sm transition-colors cursor-pointer"
-        >
-          {showSorting ? 'Ocultar ' : 'Mostrar '}Orden
-        </button>
+      <div className="flex flex-col sm:flex-row gap-2">
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              setShowFilters(!showFilters);
+              if (!showFilters) setShowSorting(false); // Cerrar orden si se abren filtros
+            }}
+            className="px-3 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md text-sm transition-colors cursor-pointer flex-1 sm:flex-none"
+          >
+            {showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
+          </button>
+          
+          <button
+            onClick={() => {
+              setShowSorting(!showSorting);
+              if (!showSorting) setShowFilters(false); // Cerrar filtros si se abre orden
+            }}
+            className="px-3 py-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md text-sm transition-colors cursor-pointer flex-1 sm:flex-none"
+          >
+            {showSorting ? 'Ocultar ' : 'Mostrar '}Orden
+          </button>
+        </div>
         
         <button
           onClick={() => setShowAddTaskModal(true)}
-          className="px-3 py-1 bg-purple-500 hover:bg-purple-600 text-white rounded-md text-sm transition-colors cursor-pointer ml-auto"
+          className="px-3 py-1 bg-purple-500 hover:bg-purple-600 text-white rounded-md text-sm transition-colors cursor-pointer w-full sm:w-auto"
         >
           + Nueva Tarea
         </button>
@@ -206,9 +231,9 @@ export default function TaskFilters({
                 className="w-full h-10 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer"
               >
                 <option value="all">Todas las prioridades</option>
-                {uniquePriorities.map(priority => (
+                {uniquePriorities.filter(priority => priority !== 'none').map(priority => (
                   <option key={priority} value={priority}>
-                    {priority === 'none' ? 'Sin prioridad' : getPriorityLabel({ priority } as any)}
+                    {getPriorityLabel({ priority } as any)}
                   </option>
                 ))}
               </select>

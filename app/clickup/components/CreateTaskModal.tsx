@@ -10,6 +10,8 @@ interface CreateTaskModalProps {
   isCreatingTask: boolean;
   onCreateTask: () => void;
   onCancel: () => void;
+  uniquePriorities: string[];
+  getPriorityLabel: (priority: any) => string;
 }
 
 export default function CreateTaskModal({
@@ -23,11 +25,13 @@ export default function CreateTaskModal({
   setNewTaskPriority,
   isCreatingTask,
   onCreateTask,
-  onCancel
+  onCancel,
+  uniquePriorities,
+  getPriorityLabel
 }: CreateTaskModalProps) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 p-4">
-      <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 max-w-md w-full shadow-2xl">
+      <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 max-w-3xl w-full shadow-2xl">
         <h2 className="text-xl font-bold mb-4">Nueva Tarea</h2>
         
         <div className="space-y-4">
@@ -43,7 +47,7 @@ export default function CreateTaskModal({
           </div>
           
           <div>
-            <label className="block text-sm font-medium mb-2">Descripción de la tarea</label>
+            <label className="block text-sm font-medium mb-2">Descripción de la tarea *</label>
             <textarea
               value={newTaskDescription}
               onChange={(e) => setNewTaskDescription(e.target.value)}
@@ -53,28 +57,63 @@ export default function CreateTaskModal({
             />
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
             <div>
               <label className="block text-sm font-medium mb-2 h-5">Fecha límite *</label>
-              <input
-                type="date"
-                value={newTaskDate}
-                onChange={(e) => setNewTaskDate(e.target.value)}
-                className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-left"
-              />
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => {
+                    if (newTaskDate) {
+                      const currentDate = new Date(newTaskDate);
+                      const previousDay = new Date(currentDate);
+                      previousDay.setDate(currentDate.getDate() - 1);
+                      setNewTaskDate(previousDay.toISOString().split('T')[0]);
+                    }
+                  }}
+                  className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer flex-shrink-0"
+                  title="Día anterior"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <input
+                  type="date"
+                  value={newTaskDate}
+                  onChange={(e) => setNewTaskDate(e.target.value)}
+                  className="flex-1 min-w-0 h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-left"
+                />
+                <button
+                  onClick={() => {
+                    if (newTaskDate) {
+                      const currentDate = new Date(newTaskDate);
+                      const nextDay = new Date(currentDate);
+                      nextDay.setDate(currentDate.getDate() + 1);
+                      setNewTaskDate(nextDay.toISOString().split('T')[0]);
+                    }
+                  }}
+                  className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer flex-shrink-0"
+                  title="Día siguiente"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
             </div>
             
             <div>
-              <label className="block text-sm font-medium mb-2 h-5">Prioridad</label>
+              <label className="block text-sm font-medium mb-2 h-5">Prioridad *</label>
               <select
                 value={newTaskPriority}
                 onChange={(e) => setNewTaskPriority(Number(e.target.value))}
                 className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
-                <option value={1}>Urgente</option>
-                <option value={2}>Alta</option>
-                <option value={3}>Normal</option>
-                <option value={4}>Baja</option>
+                {uniquePriorities.filter(priority => priority !== 'none').map(priority => (
+                  <option key={priority} value={Number(priority)}>
+                    {getPriorityLabel({ priority } as any)}
+                  </option>
+                ))}
               </select>
             </div>
           </div>

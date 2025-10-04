@@ -119,7 +119,8 @@ export async function POST(request: Request) {
     // Agregar fecha si existe
     if (dueDate) {
       const date = new Date(dueDate);
-      taskData.due_date = date.getTime();
+      const argentinaTime = new Date(date.getTime() + (3 * 3600000)); // Sumar 3 horas para GMT-3
+      taskData.due_date = argentinaTime.getTime();
     }
 
     // Agregar prioridad si existe
