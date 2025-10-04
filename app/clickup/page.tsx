@@ -103,13 +103,38 @@ export default function ClickUpPage() {
     }
   };
 
-  const handleLogin = (password: string) => {
+  const handleLogin = async (password: string) => {
     if (!password.trim()) {
       setError('Por favor ingresa una contraseña');
       return;
     }
     setIsAuthenticating(true);
-    fetchTasks(password);
+    setError(null);
+    
+    try {
+      // Primero verificar la contraseña
+      const authResponse = await fetch('/api/clickup/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      const authData = await authResponse.json();
+
+      if (!authResponse.ok || !authData.success) {
+        setError(authData.error || 'Contraseña incorrecta');
+        setIsAuthenticating(false);
+        return;
+      }
+
+      // Si la contraseña es correcta, obtener las tareas
+      fetchTasks(password);
+    } catch (err) {
+      setError('Error de conexión');
+      setIsAuthenticating(false);
+    }
   };
 
   const handleLogout = () => {
@@ -132,7 +157,7 @@ export default function ClickUpPage() {
     
     const labels: Record<string, string> = {
       '1': 'Urgente',
-      '2': 'Alta', 
+      '2': 'Alta',
       '3': 'Normal',
       '4': 'Baja',
       'urgent': 'Urgente',
@@ -468,12 +493,12 @@ export default function ClickUpPage() {
       if (realList) {
         setEditTaskListId(realList.id);
         setEditTaskFolderId(realList.space_id || '');
-      } else {
+                    } else {
         // Si no se encuentra, usar valores por defecto
         setEditTaskListId('');
         setEditTaskFolderId('');
       }
-    } else {
+                    } else {
       // Si no hay información de lista, usar valores por defecto
       setEditTaskListId('');
       setEditTaskFolderId('');

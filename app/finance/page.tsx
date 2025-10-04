@@ -34,6 +34,24 @@ export default function FinancePage() {
     setError('');
 
     try {
+      // Primero verificar la contraseña
+      const authResponse = await fetch('/api/finance/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      });
+
+      const authData = await authResponse.json();
+
+      if (!authResponse.ok || !authData.success) {
+        setError(authData.error || 'Contraseña incorrecta');
+        setIsLoading(false);
+        return;
+      }
+
+      // Si la contraseña es correcta, obtener los datos de la hoja
       const response = await fetch('/api/google-sheets/service-auth', {
         method: 'POST',
         headers: {
@@ -123,7 +141,7 @@ export default function FinancePage() {
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Contraseña
                 </label>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="password"
                     id="password"
@@ -136,7 +154,7 @@ export default function FinancePage() {
                   <button
                     type="submit"
                     disabled={isLoading || !password.trim()}
-                    className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors shadow-lg hover:shadow-xl whitespace-nowrap cursor-pointer"
+                    className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors shadow-lg hover:shadow-xl whitespace-nowrap cursor-pointer w-full sm:w-auto"
                   >
                     {isLoading ? (
                       <span className="flex items-center justify-center gap-2">
