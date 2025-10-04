@@ -240,7 +240,6 @@ export async function POST(request: Request) {
       }
     }
 
-    console.log('All Statuses collected:', Array.from(allStatuses));
     
     return NextResponse.json({
       user: userData.user,

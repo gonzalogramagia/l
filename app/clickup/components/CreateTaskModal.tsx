@@ -41,14 +41,13 @@ export default function CreateTaskModal({
   setNewTaskFolderId,
   availableLists
 }: CreateTaskModalProps) {
-  console.log('CreateTaskModal - availableLists:', availableLists);
   
-  // Auto-seleccionar "Personal" y "Organizacion" por defecto
+  // Auto-seleccionar "Personal" y "Organización" por defecto solo una vez
   React.useEffect(() => {
-    if (availableLists.length > 0) {
+    if (availableLists.length > 0 && !newTaskFolderId && !newTaskListId) {
       // Buscar el espacio "Personal"
       const personalSpace = availableLists.find(list => list.space_name === 'Personal');
-      if (personalSpace && !newTaskFolderId) {
+      if (personalSpace) {
         setNewTaskFolderId(personalSpace.space_id);
       }
       
@@ -56,11 +55,11 @@ export default function CreateTaskModal({
       const organizacionList = availableLists.find(list => 
         list.space_name === 'Personal' && list.name === 'Organización'
       );
-      if (organizacionList && !newTaskListId) {
+      if (organizacionList) {
         setNewTaskListId(organizacionList.id);
       }
     }
-  }, [availableLists, newTaskFolderId, newTaskListId, setNewTaskFolderId, setNewTaskListId]);
+  }, [availableLists]); // Solo depende de availableLists, no de los valores actuales
   
   return (
     <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 p-4">

@@ -92,7 +92,6 @@ export default function ClickUpPage() {
       setWorkspace(data.workspace);
       setAvailableStatuses(data.availableStatuses || []);
       setAvailableLists(data.availableLists || []);
-        console.log('Frontend received availableLists:', data.availableLists);
       setIsAuthenticated(true);
       sessionStorage.setItem('clickup_auth', 'true');
       sessionStorage.setItem('clickup_password', pwd);
@@ -386,13 +385,6 @@ export default function ClickUpPage() {
         return;
       }
 
-      console.log('Updating task:', {
-        taskId: selectedTask.id,
-        name: editTaskName,
-        description: editTaskDescription,
-        dueDate: editTaskDate,
-        priority: editTaskPriority
-      });
 
       const response = await fetch('/api/clickup/update-task', {
         method: 'POST',
@@ -459,10 +451,25 @@ export default function ClickUpPage() {
     const priorityValue = task.priority?.priority ? parseInt(task.priority.priority) : 3;
     setEditTaskPriority(isNaN(priorityValue) ? 3 : priorityValue);
     
-    // Inicializar lista y carpeta basado en la tarea seleccionada
-    // Por ahora usamos valores por defecto, pero se puede obtener de la tarea si está disponible
-    setEditTaskListId('');
-    setEditTaskFolderId('');
+    // Intentar encontrar la lista real de la tarea
+    // Buscar en todas las listas disponibles para encontrar dónde está realmente la tarea
+    const taskListId = task.list?.id || task.list_id;
+    
+    if (taskListId) {
+      const realList = availableLists.find(list => list.id === taskListId);
+      if (realList) {
+        setEditTaskListId(realList.id);
+        setEditTaskFolderId(realList.space_id);
+      } else {
+        // Si no se encuentra, usar valores por defecto
+        setEditTaskListId('');
+        setEditTaskFolderId('');
+      }
+    } else {
+      // Si no hay información de lista, usar valores por defecto
+      setEditTaskListId('');
+      setEditTaskFolderId('');
+    }
     
     setIsEditingTask(true);
   };

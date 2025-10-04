@@ -54,14 +54,13 @@ export default function TaskEditModal({
   setEditTaskFolderId,
   availableLists
 }: TaskEditModalProps) {
-  console.log('TaskEditModal - availableLists:', availableLists);
   
-  // Auto-seleccionar "Personal" y "Organizacion" por defecto
+  // Auto-seleccionar "Personal" y "Organización" por defecto solo si no hay valores y no hay tarea seleccionada
   React.useEffect(() => {
-    if (availableLists.length > 0) {
+    if (availableLists.length > 0 && !editTaskFolderId && !editTaskListId && !selectedTask) {
       // Buscar el espacio "Personal"
       const personalSpace = availableLists.find(list => list.space_name === 'Personal');
-      if (personalSpace && !editTaskFolderId) {
+      if (personalSpace) {
         setEditTaskFolderId(personalSpace.space_id);
       }
       
@@ -69,11 +68,11 @@ export default function TaskEditModal({
       const organizacionList = availableLists.find(list => 
         list.space_name === 'Personal' && list.name === 'Organización'
       );
-      if (organizacionList && !editTaskListId) {
+      if (organizacionList) {
         setEditTaskListId(organizacionList.id);
       }
     }
-  }, [availableLists, editTaskFolderId, editTaskListId, setEditTaskFolderId, setEditTaskListId]);
+  }, [availableLists, selectedTask]); // Solo se ejecuta si no hay tarea seleccionada
   
   return (
     <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 p-4" onClick={onCancel}>
@@ -177,47 +176,14 @@ export default function TaskEditModal({
           </div>
         </div>
         
-        {/* Selectores de Espacio y Lista */}
-        <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
-          {/* Selector de Espacio */}
-          <div>
-            <label className="block text-sm font-medium mb-2 mt-3">Espacio *</label>
-            <select
-              value={editTaskFolderId}
-              onChange={(e) => {
-                setEditTaskFolderId(e.target.value);
-                setEditTaskListId(''); // Limpiar lista cuando cambie espacio
-              }}
-              className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-            >
-              <option value="">Seleccionar espacio...</option>
-              {Array.from(new Set(availableLists.filter(list => list.space_id && list.space_name).map(list => list.space_name))).map(spaceName => {
-                const space = availableLists.find(list => list.space_name === spaceName);
-                return (
-                  <option key={space?.space_id} value={space?.space_id}>
-                    {spaceName}
-                  </option>
-                );
-              })}
-            </select>
+        {/* Información de ubicación actual (solo lectura) */}
+        <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-md mt-5">
+          <label className="block text-sm font-medium mb-2">Ubicación actual</label>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            {availableLists.find(list => list.id === editTaskListId)?.space_name} → {availableLists.find(list => list.id === editTaskListId)?.name}
           </div>
-          
-          {/* Selector de Lista */}
-          <div>
-            <label className="block text-sm font-medium mb-2 sm:mt-3">Lista *</label>
-            <select
-              value={editTaskListId}
-              onChange={(e) => setEditTaskListId(e.target.value)}
-              disabled={!editTaskFolderId}
-              className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
-            >
-              <option value="">Seleccionar lista...</option>
-              {availableLists.filter(list => list.space_id === editTaskFolderId).map(list => (
-                <option key={list.id} value={list.id}>
-                  {list.name}
-                </option>
-              ))}
-            </select>
+          <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+            Nota: No se puede cambiar la ubicación de tareas existentes debido a limitaciones del plan de ClickUp
           </div>
         </div>
         
@@ -230,7 +196,7 @@ export default function TaskEditModal({
         <div className="flex gap-3 mt-6">
           <button
             onClick={onSave}
-            disabled={isUpdatingTask || !editTaskName.trim() || !editTaskDescription.trim() || !editTaskDate || !editTaskPriority || !editTaskFolderId || !editTaskListId}
+            disabled={isUpdatingTask || !editTaskName.trim() || !editTaskDescription.trim() || !editTaskDate || !editTaskPriority}
             className="flex-1 px-4 py-3 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
           >
             {isUpdatingTask ? (

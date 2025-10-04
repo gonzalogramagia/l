@@ -39,8 +39,10 @@ export async function POST(request: NextRequest) {
     // Preparar el payload para la actualización
     const updatePayload: any = {};
 
-    if (name !== undefined) updatePayload.name = name;
-    if (description !== undefined) updatePayload.description = description;
+    // Solo incluir campos que realmente han cambiado
+    if (name !== undefined && name.trim() !== '') updatePayload.name = name;
+    if (description !== undefined && description.trim() !== '') updatePayload.description = description;
+    
     if (dueDate !== undefined) {
       if (dueDate) {
         // Convertir fecha a timestamp en milisegundos, ajustando a GMT-3 (Argentina)
@@ -51,11 +53,23 @@ export async function POST(request: NextRequest) {
         updatePayload.due_date = null;
       }
     }
+    
     if (priority !== undefined) updatePayload.priority = priority;
     if (status !== undefined) updatePayload.status = status;
-    if (listId !== undefined) updatePayload.list_id = listId;
+    
+    // Nota: El cambio de lista está deshabilitado debido a limitaciones del plan de ClickUp
+    // Solo se pueden actualizar otros campos de la tarea
 
-    // Hacer la llamada real a la API de ClickUp
+    // Si no hay nada que actualizar, devolver éxito sin hacer llamada
+    if (Object.keys(updatePayload).length === 0) {
+      return NextResponse.json({
+        success: true,
+        message: 'No hay cambios para actualizar',
+        task: null
+      });
+    }
+
+    // Hacer la llamada real a la API de ClickUp para actualizar otros campos
     const clickupResponse = await fetch(`https://api.clickup.com/api/v2/task/${taskId}`, {
       method: 'PUT',
       headers: {
@@ -66,7 +80,18 @@ export async function POST(request: NextRequest) {
     });
 
     if (!clickupResponse.ok) {
-      const errorData = await clickupResponse.json();
+      let errorData;
+      try {
+        errorData = await clickupResponse.json();
+      } catch (e) {
+        // Si no es JSON válido, obtener el texto de la respuesta
+        const responseText = await clickupResponse.text();
+        console.error('ClickUp API returned non-JSON response:', responseText);
+        return NextResponse.json(
+          { error: `Error al actualizar tarea en ClickUp: ${responseText}` },
+          { status: clickupResponse.status }
+        );
+      }
       console.error('Error from ClickUp API:', errorData);
       return NextResponse.json(
         { error: `Error al actualizar tarea en ClickUp: ${errorData.err || 'Error desconocido'}` },
