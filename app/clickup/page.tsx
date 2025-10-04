@@ -26,12 +26,24 @@ export default function ClickUpPage() {
   const [dateFilter, setDateFilter] = useState<'all' | 'with-date' | 'no-date'>('all');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(() => {
-    const today = new Date();
-    return today.toISOString().split('T')[0];
+    const now = new Date();
+    // Ajustar a GMT-3 (Argentina)
+    const argentinaTime = new Date(now.getTime() - (now.getTimezoneOffset() * 60000) - (3 * 3600000));
+    return argentinaTime.toISOString().split('T')[0];
   });
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>(() => {
+    const now = new Date();
+    // Ajustar a GMT-3 (Argentina)
+    const argentinaTime = new Date(now.getTime() - (now.getTimezoneOffset() * 60000) - (3 * 3600000));
+    const monthNames = [
+      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+    ];
+    const monthName = monthNames[argentinaTime.getMonth()];
+    return monthName.charAt(0).toUpperCase() + monthName.slice(1);
+  });
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [newTaskName, setNewTaskName] = useState('');
   const [newTaskDescription, setNewTaskDescription] = useState('');

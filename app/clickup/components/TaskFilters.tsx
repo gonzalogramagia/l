@@ -44,11 +44,15 @@ export default function TaskFilters({
   return (
     <div className="px-4 lg:px-0 max-w-xl mx-auto mb-6">
       {/* Filtros siempre visibles */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <div className="md:col-span-2 flex flex-col">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5">
-            Buscar por nombre o descripción
-          </label>
+      <div className="grid grid-cols-4 gap-4 mb-4">
+        <div className="col-span-2 flex flex-col">
+              <label 
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5 cursor-pointer hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                onClick={() => setSearchQuery('')}
+                title="Hacer clic para limpiar la búsqueda"
+              >
+                Buscar por nombre o descripción
+              </label>
           <input
             type="text"
             value={searchQuery}
@@ -57,7 +61,7 @@ export default function TaskFilters({
             placeholder="Buscar tareas..."
           />
         </div>
-        <div className="flex flex-col">
+        <div className="col-span-2 flex flex-col">
               <label 
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 h-5 cursor-pointer hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
                 onClick={() => setSelectedDate(null)}
@@ -65,12 +69,43 @@ export default function TaskFilters({
               >
                 Buscar por fecha exacta
               </label>
-          <input
-            type="date"
-            value={selectedDate || ''}
-            onChange={(e) => setSelectedDate(e.target.value || null)}
-            className="w-full h-10 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => {
+                const baseDate = selectedDate ? new Date(selectedDate) : new Date();
+                const previousDay = new Date(baseDate);
+                previousDay.setDate(baseDate.getDate() - 1);
+                setSelectedDate(previousDay.toISOString().split('T')[0]);
+              }}
+              className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors cursor-pointer flex-shrink-0"
+              title="Día anterior"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <input
+              type="date"
+              value={selectedDate || ''}
+              onChange={(e) => setSelectedDate(e.target.value || null)}
+              className="flex-1 min-w-0 h-10 p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer"
+              style={{ cursor: 'pointer' }}
+            />
+            <button
+              onClick={() => {
+                const baseDate = selectedDate ? new Date(selectedDate) : new Date();
+                const nextDay = new Date(baseDate);
+                nextDay.setDate(baseDate.getDate() + 1);
+                setSelectedDate(nextDay.toISOString().split('T')[0]);
+              }}
+              className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors cursor-pointer flex-shrink-0"
+              title="Día siguiente"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
