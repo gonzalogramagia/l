@@ -1,13 +1,14 @@
-import { Task } from '../types';
+import { Task, ListData } from '../types';
 
 interface TaskCardProps {
   task: Task;
   onClick: () => void;
   getPriorityLabel: (priority: Task['priority']) => string;
   formatDate: (timestamp: string | null) => string | null;
+  availableLists: ListData[];
 }
 
-export default function TaskCard({ task, onClick, getPriorityLabel, formatDate }: TaskCardProps) {
+export default function TaskCard({ task, onClick, getPriorityLabel, formatDate, availableLists }: TaskCardProps) {
   return (
     <div
       className="bg-white dark:bg-gray-900 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
@@ -39,8 +40,17 @@ export default function TaskCard({ task, onClick, getPriorityLabel, formatDate }
         {task.description || 'Sin descripción'}
       </p>
       
-      <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500">
+      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
         <span>📅 {task.due_date ? formatDate(task.due_date) : 'Fecha por definir'}</span>
+        {/* Ubicación en la esquina inferior derecha */}
+        {task.list_id && (
+          <span className="text-gray-400 dark:text-gray-600">
+            {(() => {
+              const list = availableLists.find(l => l.id === task.list_id);
+              return list ? `${list.space_name} → ${list.name}` : '';
+            })()}
+          </span>
+        )}
       </div>
     </div>
   );

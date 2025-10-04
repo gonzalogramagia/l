@@ -1,4 +1,4 @@
-import { Task } from '../types';
+import { Task, ListData } from '../types';
 
 interface TaskDetailsModalProps {
   selectedTask: Task;
@@ -9,6 +9,7 @@ interface TaskDetailsModalProps {
   uniqueStatuses: string[];
   getPriorityLabel: (priority: Task['priority']) => string;
   formatDate: (timestamp: string | null) => string | null;
+  availableLists: ListData[];
 }
 
 export default function TaskDetailsModal({
@@ -19,7 +20,8 @@ export default function TaskDetailsModal({
   onStatusChange,
   uniqueStatuses,
   getPriorityLabel,
-  formatDate
+  formatDate,
+  availableLists
 }: TaskDetailsModalProps) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 p-4" onClick={onClose}>
@@ -60,6 +62,15 @@ export default function TaskDetailsModal({
                     </option>
                   ))}
                 </select>
+                {/* Ubicación entre el estado y el icono de trash */}
+                {selectedTask.list_id && (
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                    {(() => {
+                      const list = availableLists.find(l => l.id === selectedTask.list_id);
+                      return list ? `${list.space_name} → ${list.name}` : 'Ubicación desconocida';
+                    })()}
+                  </span>
+                )}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();

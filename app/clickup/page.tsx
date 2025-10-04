@@ -621,6 +621,7 @@ return (
                 onClick={() => setSelectedTask(task)}
                 getPriorityLabel={getPriorityLabel}
                 formatDate={formatDate}
+                availableLists={availableLists}
               />
             ))}
 
@@ -680,9 +681,10 @@ return (
           onEdit={startEditingTask}
           onDelete={handleDeleteTask}
           onStatusChange={handleStatusChange}
-            uniqueStatuses={allAvailableStatuses}
+          uniqueStatuses={allAvailableStatuses}
           getPriorityLabel={getPriorityLabel}
           formatDate={formatDate}
+          availableLists={availableLists}
         />
       )}
 
