@@ -75,7 +75,7 @@ export default function TaskEditModal({
   }, [availableLists, selectedTask]); // Solo se ejecuta si no hay tarea seleccionada
   
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 p-4" onClick={onCancel}>
+    <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 p-2 sm:p-4" onClick={onCancel}>
       <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 max-w-3xl w-full shadow-2xl" onClick={e => e.stopPropagation()}>
         <h2 className="text-xl font-bold mb-4">Editar Tarea</h2>
         
@@ -86,7 +86,8 @@ export default function TaskEditModal({
               type="text"
               value={editTaskName}
               onChange={(e) => setEditTaskName(e.target.value)}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              disabled={isUpdatingTask}
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="Nombre de la tarea"
             />
           </div>
@@ -96,7 +97,8 @@ export default function TaskEditModal({
             <textarea
               value={editTaskDescription}
               onChange={(e) => setEditTaskDescription(e.target.value)}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              disabled={isUpdatingTask}
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
               rows={3}
               placeholder="Descripción de la tarea"
             />
@@ -121,7 +123,8 @@ export default function TaskEditModal({
                       setEditTaskDate(previousDay.toISOString().split('T')[0]);
                     }
                   }}
-                  className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer flex-shrink-0"
+                  disabled={isUpdatingTask}
+                  className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Día anterior"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,7 +135,8 @@ export default function TaskEditModal({
                   type="date"
                   value={editTaskDate}
                   onChange={(e) => setEditTaskDate(e.target.value)}
-                  className="flex-1 min-w-0 h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-left"
+                  disabled={isUpdatingTask}
+                  className="flex-1 min-w-0 h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-left disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 <button
                   onClick={() => {
@@ -149,7 +153,8 @@ export default function TaskEditModal({
                       setEditTaskDate(nextDay.toISOString().split('T')[0]);
                     }
                   }}
-                  className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer flex-shrink-0"
+                  disabled={isUpdatingTask}
+                  className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Día siguiente"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,7 +174,8 @@ export default function TaskEditModal({
                   const numValue = isNaN(Number(value)) ? value : Number(value);
                   setEditTaskPriority(numValue);
                 }}
-                className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                disabled={isUpdatingTask}
+                className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {uniquePriorities.filter(priority => priority !== 'none').map(priority => (
                   <option key={priority} value={priority}>

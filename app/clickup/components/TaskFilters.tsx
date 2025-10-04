@@ -42,7 +42,7 @@ export default function TaskFilters({
   setShowAddTaskModal
 }: TaskFiltersProps) {
   return (
-    <div className="px-4 lg:px-0 max-w-xl mx-auto mb-6">
+    <div className="px-1 lg:px-0 max-w-xl mx-auto mb-6">
       {/* Filtros siempre visibles */}
       <div className="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-4 mb-4">
         {/* Buscador de nombre/descripción */}
@@ -157,9 +157,9 @@ export default function TaskFilters({
         
         <button
           onClick={() => setShowAddTaskModal(true)}
-          className="px-3 py-1 bg-purple-500 hover:bg-purple-600 text-white rounded-md text-sm transition-colors cursor-pointer w-full sm:w-auto"
+          className="px-3 py-1 bg-purple-500 hover:bg-purple-600 text-white rounded-md text-sm transition-colors cursor-pointer w-full sm:w-auto mt-3 sm:mt-0"
         >
-          + Nueva Tarea
+          + Agregar Tarea
         </button>
       </div>
 

@@ -62,7 +62,7 @@ export default function CreateTaskModal({
   }, [availableLists]); // Solo depende de availableLists, no de los valores actuales
   
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black bg-opacity-10 flex items-center justify-center z-50 p-2 sm:p-4">
       <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-xl p-6 max-w-3xl w-full shadow-2xl">
         <h2 className="text-xl font-bold mb-4">Nueva Tarea</h2>
         
@@ -73,7 +73,8 @@ export default function CreateTaskModal({
               type="text"
               value={newTaskName}
               onChange={(e) => setNewTaskName(e.target.value)}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              disabled={isCreatingTask}
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
               placeholder="Nombre de la tarea"
             />
           </div>
@@ -83,7 +84,8 @@ export default function CreateTaskModal({
             <textarea
               value={newTaskDescription}
               onChange={(e) => setNewTaskDescription(e.target.value)}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              disabled={isCreatingTask}
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
               rows={3}
               placeholder="Descripción de la tarea"
             />
@@ -108,7 +110,8 @@ export default function CreateTaskModal({
                       setNewTaskDate(previousDay.toISOString().split('T')[0]);
                     }
                   }}
-                  className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer flex-shrink-0"
+                  disabled={isCreatingTask}
+                  className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Día anterior"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,7 +122,8 @@ export default function CreateTaskModal({
                   type="date"
                   value={newTaskDate}
                   onChange={(e) => setNewTaskDate(e.target.value)}
-                  className="flex-1 min-w-0 h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-left"
+                  disabled={isCreatingTask}
+                  className="flex-1 min-w-0 h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-left disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 <button
                   onClick={() => {
@@ -136,7 +140,8 @@ export default function CreateTaskModal({
                       setNewTaskDate(nextDay.toISOString().split('T')[0]);
                     }
                   }}
-                  className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer flex-shrink-0"
+                  disabled={isCreatingTask}
+                  className="h-10 w-10 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Día siguiente"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,7 +161,8 @@ export default function CreateTaskModal({
                   const numValue = isNaN(Number(value)) ? value : Number(value);
                   setNewTaskPriority(numValue);
                 }}
-                className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                disabled={isCreatingTask}
+                className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {uniquePriorities.filter(priority => priority !== 'none').map(priority => (
                   <option key={priority} value={priority}>
@@ -179,7 +185,8 @@ export default function CreateTaskModal({
                 setNewTaskFolderId(e.target.value);
                 setNewTaskListId(''); // Limpiar lista cuando cambie espacio
               }}
-              className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              disabled={isCreatingTask}
+              className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <option value="">Seleccionar espacio...</option>
               {Array.from(new Set(availableLists.filter(list => list.space_id && list.space_name).map(list => list.space_name))).map(spaceName => {
@@ -199,8 +206,8 @@ export default function CreateTaskModal({
             <select
               value={newTaskListId}
               onChange={(e) => setNewTaskListId(e.target.value)}
-              disabled={!newTaskFolderId}
-              className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed"
+              disabled={!newTaskFolderId || isCreatingTask}
+              className="w-full h-10 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <option value="">Seleccionar lista...</option>
               {availableLists.filter(list => list.space_id === newTaskFolderId).map(list => (
@@ -215,7 +222,7 @@ export default function CreateTaskModal({
         <div className="flex gap-3 mt-6">
           <button
             onClick={onCreateTask}
-            disabled={isCreatingTask || !newTaskName.trim() || !newTaskDate || !newTaskFolderId || !newTaskListId}
+            disabled={isCreatingTask || !newTaskName.trim() || !newTaskDescription.trim() || !newTaskDate || !newTaskFolderId || !newTaskListId}
             className="flex-1 px-4 py-3 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed cursor-pointer"
           >
             {isCreatingTask ? (
@@ -224,7 +231,7 @@ export default function CreateTaskModal({
                 <span className="text-xs">Creando... (puede tardar varios segundos)</span>
               </>
             ) : (
-              'Crear Tarea'
+              'Agregar Tarea'
             )}
           </button>
           <button

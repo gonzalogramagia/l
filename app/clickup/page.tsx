@@ -624,7 +624,7 @@ return (
           />
 
           {/* Lista de tareas */}
-          <div className="px-4 lg:px-0 max-w-xl mx-auto space-y-3">
+          <div className="px-1 lg:px-0 max-w-xl mx-auto space-y-3">
             {sortedFilteredTasks.slice(0, visibleCount).map((task) => (
               <TaskCard
                 key={task.id}
