@@ -188,13 +188,13 @@ export async function POST(request: Request) {
           }
         );
 
-          const tasksData = await tasksResponse.json();
-          // Agregar list_id a cada tarea
-          const tasksWithListId = (tasksData.tasks || []).map((task: any) => ({
-            ...task,
-            list_id: list.id
-          }));
-          allTasks.push(...tasksWithListId);
+        const tasksData = await tasksResponse.json();
+        // Agregar list_id a cada tarea
+        const tasksWithListId = (tasksData.tasks || []).map((task: any) => ({
+          ...task,
+          list_id: list.id
+        }));
+        allTasks.push(...tasksWithListId);
       }
 
       // Obtener tareas de listas en carpetas
