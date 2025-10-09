@@ -322,6 +322,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@notionhq/client@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@notionhq/client@npm:5.1.0"
+  checksum: 10c0/05e97b30451ef781dd26ee67cb58e923a59f870fbcf0a9f1b3664ecdd9183aec9cefb0d5beeb4939aa678190a39672e771df5451f0a653ab1a315bc8874faa2e
+  languageName: node
+  linkType: hard
+
 "@supabase/auth-js@npm:2.72.0":
   version: 2.72.0
   resolution: "@supabase/auth-js@npm:2.72.0"
@@ -2861,6 +2868,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
+    "@notionhq/client": "npm:^5.1.0"
     "@supabase/supabase-js": "npm:^2.58.0"
     "@tailwindcss/postcss": "npm:4.0.0-alpha.13"
     "@types/node": "npm:^24.6.2"
