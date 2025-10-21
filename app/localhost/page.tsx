@@ -146,6 +146,19 @@ export default function LocalhostPage() {
                   setEditingBlockId(block.id)
                   setEditingContent(block.content)
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    // si estamos editando este bloque, guardar contenido y salir de edición
+                    if (editingBlockId === block.id) {
+                      updateBlock(block.id, editingContent)
+                      setEditingBlockId(null)
+                      setEditingContent('')
+                      // quitar focus del input
+                      ;(e.target as HTMLInputElement).blur()
+                    }
+                  }
+                }}
                 className={`flex-1 text-sm font-medium px-2 py-1 border-b border-gray-200 dark:border-gray-700 focus:outline-none focus:border-blue-500 ${editingBlockId === block.id ? 'bg-black text-white' : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white'}`}
                 placeholder={"Nombre del bloque #jrub..."}
               />
@@ -177,6 +190,17 @@ export default function LocalhostPage() {
               <textarea
                 value={editingContent}
                 onChange={(e) => setEditingContent(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    // Enter without Shift -> save and exit edit mode
+                    e.preventDefault()
+                    updateBlock(block.id, editingContent)
+                    setEditingBlockId(null)
+                    setEditingContent('')
+                    ;(e.target as HTMLTextAreaElement).blur()
+                  }
+                  // Shift+Enter should insert newline (default behavior)
+                }}
                 placeholder="Escribe aquí..."
                 className="w-full min-h-[160px] p-3 border border-gray-300 dark:border-gray-600 rounded-md resize-y bg-black text-white focus:outline-none focus:ring-2 focus:ring-blue-500 whitespace-pre-wrap break-words break-all overflow-auto"
                 autoFocus
