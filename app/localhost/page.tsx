@@ -105,6 +105,7 @@ export default function LocalhostPage() {
   }
 
   const deleteBlock = (id: string) => {
+    if (!confirm('¿Estás seguro que quieres eliminar este bloque?')) return
     setBlocks(blocks.filter(block => block.id !== id))
   }
 
@@ -122,7 +123,7 @@ export default function LocalhostPage() {
         <div className="flex gap-4 mb-6">
           <button
             onClick={addBlock}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors cursor-pointer"
           >
             + Agregar Bloque
           </button>
@@ -132,12 +133,20 @@ export default function LocalhostPage() {
       <div className="space-y-4">
         {blocks.slice().reverse().map((block) => (
           <div key={block.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-            <div className="flex justify-between items-start mb-2 gap-3">
+            <div className="flex justify-between items-center mb-2 gap-3">
               <input
                 type="text"
                 value={block.title}
                 onChange={(e) => updateBlockTitle(block.id, e.target.value)}
-                className="flex-1 text-sm font-medium px-2 py-1 bg-transparent border-b border-gray-200 dark:border-gray-700 focus:outline-none focus:border-blue-500 text-gray-900 dark:text-white"
+                onFocus={() => {
+                  setEditingBlockId(block.id)
+                  setEditingContent(block.content)
+                }}
+                onClick={() => {
+                  setEditingBlockId(block.id)
+                  setEditingContent(block.content)
+                }}
+                className={`flex-1 text-sm font-medium px-2 py-1 border-b border-gray-200 dark:border-gray-700 focus:outline-none focus:border-blue-500 ${editingBlockId === block.id ? 'bg-black text-white' : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white'}`}
                 placeholder={"Nombre del bloque #jrub..."}
               />
               <div className="flex items-center gap-3">
@@ -153,13 +162,13 @@ export default function LocalhostPage() {
 
                 <button
                   onClick={() => deleteBlock(block.id)}
-                  className="flex items-center gap-1 text-red-500 hover:text-red-700 text-sm cursor-pointer"
+                  className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
                   aria-label={`Eliminar ${block.title}`}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" aria-hidden="true">
                     <path d="M9 3a1 1 0 00-1 1v1H4a1 1 0 100 2h16a1 1 0 100-2h-4V4a1 1 0 00-1-1H9zM7 9a1 1 0 011 1v7a2 2 0 002 2h4a2 2 0 002-2v-7a1 1 0 112 0v7a4 4 0 01-4 4h-4a4 4 0 01-4-4v-7a1 1 0 011-1z" />
                   </svg>
-                  <span className="ml-0.5">Eliminar</span>
+                  <span>Eliminar</span>
                 </button>
               </div>
             </div>
@@ -169,12 +178,12 @@ export default function LocalhostPage() {
                 value={editingContent}
                 onChange={(e) => setEditingContent(e.target.value)}
                 placeholder="Escribe aquí..."
-                className="w-full min-h-[160px] p-3 border border-gray-300 dark:border-gray-600 rounded-md resize-y bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full min-h-[160px] p-3 border border-gray-300 dark:border-gray-600 rounded-md resize-y bg-black text-white focus:outline-none focus:ring-2 focus:ring-blue-500 whitespace-pre-wrap break-words break-all overflow-auto"
                 autoFocus
               />
             ) : (
               <div
-                className="w-full min-h-[160px] p-3 border border-gray-300 dark:border-gray-600 rounded-md resize-y bg-white dark:bg-gray-800 text-black dark:text-white"
+                className="w-full min-h-[160px] p-3 border border-gray-300 dark:border-gray-600 rounded-md resize-y bg-white dark:bg-gray-800 text-black dark:text-white whitespace-pre-wrap break-words break-all overflow-auto"
                 // Mostrar contenido con links clicables y permitir click-to-edit salvo clicks en links
 
                 onClick={(e) => {
