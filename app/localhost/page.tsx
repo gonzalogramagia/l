@@ -53,15 +53,41 @@ export default function LocalhostPage() {
       const target = e.target as HTMLElement | null
       if (!target) return
 
-      // comprobar si el click fue dentro del bloque que está en edición
-      const blockEl = document.querySelector(`[data-block-id="${editingBlockId}"]`)
-      if (blockEl && blockEl.contains(target)) return
+      // Si el click fue sobre un enlace, no interferimos (abrirá en nueva pestaña)
+      if (target.closest && target.closest('a')) return
 
-      // si fue fuera: guardar y cerrar
+      // Encontrar el bloque que contiene el target (si existe)
+      let node: HTMLElement | null = target
+      let targetBlockId: string | null = null
+      while (node) {
+        const attr = node.getAttribute && node.getAttribute('data-block-id')
+        if (attr) {
+          targetBlockId = attr
+          break
+        }
+        node = node.parentElement
+      }
+
+      // Si el click fue dentro del mismo bloque en edición => no hacer nada
+      if (targetBlockId === editingBlockId) return
+
+      // Guardar el bloque actualmente en edición
       const current = blocks.find(b => b.id === editingBlockId)
       if (current) {
         updateBlock(current.id, editingContent)
       }
+
+      if (targetBlockId) {
+        // Si el click fue dentro de otro bloque: cambiar a ese bloque y cargar su contenido
+        const next = blocks.find(b => b.id === targetBlockId)
+        if (next) {
+          setEditingBlockId(next.id)
+          setEditingContent(next.content)
+          return
+        }
+      }
+
+      // Si fue fuera de cualquier bloque: cerrar edición
       setEditingBlockId(null)
       setEditingContent('')
     }
@@ -91,10 +117,18 @@ export default function LocalhostPage() {
       setEditingBlockId(null)
       setEditingContent('')
     } else {
+      // guardar actual antes de cambiar
+      saveCurrentEditing()
       // entrar a editar
       setEditingBlockId(block.id)
       setEditingContent(block.content)
     }
+  }
+
+  const saveCurrentEditing = () => {
+    if (!editingBlockId) return
+    const current = blocks.find(b => b.id === editingBlockId)
+    if (current) updateBlock(current.id, editingContent)
   }
 
   // Convierte URLs en enlaces seguros que abren en nueva pestaña
@@ -120,24 +154,24 @@ export default function LocalhostPage() {
       title: '',
       content: ''
     }
-    setBlocks([...blocks, newBlock])
+    setBlocks(prev => [...prev, newBlock])
   }
 
   const updateBlock = (id: string, content: string) => {
-    setBlocks(blocks.map(block => 
+    setBlocks(prev => prev.map(block => 
       block.id === id ? { ...block, content } : block
     ))
   }
 
   const updateBlockTitle = (id: string, title: string) => {
-    setBlocks(blocks.map(block =>
+    setBlocks(prev => prev.map(block =>
       block.id === id ? { ...block, title } : block
     ))
   }
 
   const deleteBlock = (id: string) => {
     if (!confirm('¿Estás seguro que quieres eliminar este bloque?')) return
-    setBlocks(blocks.filter(block => block.id !== id))
+    setBlocks(prev => prev.filter(block => block.id !== id))
   }
 
 
@@ -170,12 +204,22 @@ export default function LocalhostPage() {
                 value={block.title}
                 onChange={(e) => updateBlockTitle(block.id, e.target.value)}
                 onFocus={() => {
-                  setEditingBlockId(block.id)
-                  setEditingContent(block.content)
+                  if (editingBlockId !== block.id) {
+                    saveCurrentEditing()
+                    setEditingBlockId(block.id)
+                    setEditingContent(block.content)
+                  } else {
+                    setEditingBlockId(block.id)
+                  }
                 }}
                 onClick={() => {
-                  setEditingBlockId(block.id)
-                  setEditingContent(block.content)
+                  if (editingBlockId !== block.id) {
+                    saveCurrentEditing()
+                    setEditingBlockId(block.id)
+                    setEditingContent(block.content)
+                  } else {
+                    setEditingBlockId(block.id)
+                  }
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
@@ -251,7 +295,8 @@ export default function LocalhostPage() {
                     node = node.parentElement
                   }
 
-                  // activar edición
+                  // activar edición (guardar anterior si aplica)
+                  saveCurrentEditing()
                   setEditingBlockId(block.id)
                   setEditingContent(block.content)
                 }}
