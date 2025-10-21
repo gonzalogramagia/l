@@ -10,6 +10,8 @@ interface TextBlock {
 
 export default function LocalhostPage() {
   const [blocks, setBlocks] = useState<TextBlock[]>([])
+  const [editingBlockId, setEditingBlockId] = useState<string | null>(null)
+  const [editingContent, setEditingContent] = useState('')
   // ahora usamos IDs cortos tipo hash de 4 caracteres
 
   // Cargar datos del localStorage al montar el componente
@@ -49,6 +51,35 @@ export default function LocalhostPage() {
       id = make()
     }
     return id
+  }
+
+  // Alterna entre modo edición para un bloque (editar/guardar)
+  const toggleEditBlock = (block: TextBlock) => {
+    if (editingBlockId === block.id) {
+      // guardar
+      updateBlock(block.id, editingContent)
+      setEditingBlockId(null)
+      setEditingContent('')
+    } else {
+      // entrar a editar
+      setEditingBlockId(block.id)
+      setEditingContent(block.content)
+    }
+  }
+
+  // Convierte URLs en enlaces seguros que abren en nueva pestaña
+  const linkify = (text: string) => {
+    if (!text) return ''
+    // escapar HTML básico
+    const escapeHtml = (str: string) =>
+      str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+    const escaped = escapeHtml(text)
+    const urlRegex = /((https?:\/\/|www\.)[\w\-.:/?#@!$&'()*+,;=%~]+)/g
+    return escaped.replace(urlRegex, (match) => {
+      const url = match.startsWith('http') ? match : `https://${match}`
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">${match}</a>`
+    })
   }
 
   const addBlock = () => {
@@ -107,10 +138,19 @@ export default function LocalhostPage() {
                 value={block.title}
                 onChange={(e) => updateBlockTitle(block.id, e.target.value)}
                 className="flex-1 text-sm font-medium px-2 py-1 bg-transparent border-b border-gray-200 dark:border-gray-700 focus:outline-none focus:border-blue-500 text-gray-900 dark:text-white"
-                placeholder={"Nombre del bloque..."}
+                placeholder={"Nombre del bloque #jrub..."}
               />
               <div className="flex items-center gap-3">
-                <span className="text-xs text-gray-500 dark:text-gray-400">#{block.id}</span>
+                <button
+                  onClick={() => toggleEditBlock(block)}
+                  className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" aria-hidden="true">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                  </svg>
+                  <span>{editingBlockId === block.id ? 'Guardar' : 'Editar'}</span>
+                </button>
+
                 <button
                   onClick={() => deleteBlock(block.id)}
                   className="flex items-center gap-1 text-red-500 hover:text-red-700 text-sm cursor-pointer"
@@ -124,19 +164,51 @@ export default function LocalhostPage() {
               </div>
             </div>
 
-            <textarea
-              value={block.content}
-              onChange={(e) => updateBlock(block.id, e.target.value)}
-              placeholder="Escribe aquí..."
-              className="w-full min-h-[100px] p-3 border border-gray-300 dark:border-gray-600 rounded-md resize-y bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              autoFocus={blocks.length === 1 && block.content === ''}
-            />
+            {editingBlockId === block.id ? (
+              <textarea
+                value={editingContent}
+                onChange={(e) => setEditingContent(e.target.value)}
+                placeholder="Escribe aquí..."
+                className="w-full min-h-[160px] p-3 border border-gray-300 dark:border-gray-600 rounded-md resize-y bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                autoFocus
+              />
+            ) : (
+              <div
+                className="w-full min-h-[160px] p-3 border border-gray-300 dark:border-gray-600 rounded-md resize-y bg-white dark:bg-gray-800 text-black dark:text-white"
+                // Mostrar contenido con links clicables y permitir click-to-edit salvo clicks en links
 
+                onClick={(e) => {
+                  // si el target es un enlace o tiene un ancestro <a>, no entrar en modo edición
+                  let node = e.target as HTMLElement | null
+                  while (node) {
+                    if (node.tagName === 'A') return
+                    node = node.parentElement
+                  }
+
+                  // activar edición
+                  setEditingBlockId(block.id)
+                  setEditingContent(block.content)
+                }}
+                dangerouslySetInnerHTML={{ __html: linkify(block.content) }}
+              />
+            )}
             <div className="text-xs text-gray-400 mt-2">
-              {block.content.length} caracteres
+              {(editingBlockId === block.id ? editingContent.length : block.content.length)} caracteres
             </div>
           </div>
         ))}
+      </div>
+      
+      {/* Botón fijo en esquina inferior derecha */}
+      <div className="fixed right-6 bottom-6">
+        <a
+          href="https://gonza.gr/copiar"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-3 py-2 bg-gray-900 text-white rounded-lg shadow-lg hover:bg-gray-800 transition-colors"
+        >
+          Símbolos
+        </a>
       </div>
     </section>
   )
