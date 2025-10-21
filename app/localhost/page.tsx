@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 
 interface TextBlock {
   id: string
+  tag: string
   title: string
   content: string
 }
@@ -22,15 +23,20 @@ export default function LocalhostPage() {
       try {
         const parsed = JSON.parse(savedBlocks)
         // migrate titles that were auto-generated as "Bloque <id>" to empty so placeholder shows
+        // and ensure each block has a tag (random) for the placeholder
         const migrated = (parsed as any[]).map(b => {
+          const tag = (b && typeof b.tag === 'string' && b.tag) ? b.tag : generateId()
           if (b && typeof b.title === 'string' && /^Bloque [a-z0-9]{4}$/i.test(b.title)) {
-            return { ...b, title: '' }
+            return { ...b, title: '', tag }
           }
-          return b
+          return { ...b, tag }
         })
-        setBlocks(migrated)
+        setBlocks(migrated as TextBlock[])
       } catch (e) {
-        setBlocks(JSON.parse(savedBlocks))
+        // fallback: parse and ensure tags
+        const raw = JSON.parse(savedBlocks) as any[]
+        const ensured = raw.map(b => ({ ...b, tag: (b && b.tag) ? b.tag : generateId() }))
+        setBlocks(ensured as TextBlock[])
       }
     }
   }, [])
@@ -39,6 +45,30 @@ export default function LocalhostPage() {
   useEffect(() => {
     localStorage.setItem('localhost-blocks', JSON.stringify(blocks))
   }, [blocks])
+
+  // Si se hace click fuera del bloque en edición, guardar y salir de edición
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (!editingBlockId) return
+      const target = e.target as HTMLElement | null
+      if (!target) return
+
+      // comprobar si el click fue dentro del bloque que está en edición
+      const blockEl = document.querySelector(`[data-block-id="${editingBlockId}"]`)
+      if (blockEl && blockEl.contains(target)) return
+
+      // si fue fuera: guardar y cerrar
+      const current = blocks.find(b => b.id === editingBlockId)
+      if (current) {
+        updateBlock(current.id, editingContent)
+      }
+      setEditingBlockId(null)
+      setEditingContent('')
+    }
+
+    document.addEventListener('click', onDocClick)
+    return () => document.removeEventListener('click', onDocClick)
+  }, [editingBlockId, editingContent, blocks])
 
   // Genera un hash corto de 4 caracteres (alfa-numérico) y evita colisiones
   const generateId = () => {
@@ -86,6 +116,7 @@ export default function LocalhostPage() {
     const id = generateId()
     const newBlock: TextBlock = {
       id,
+      tag: generateId(),
       title: '',
       content: ''
     }
@@ -132,9 +163,9 @@ export default function LocalhostPage() {
 
       <div className="space-y-4">
         {blocks.slice().reverse().map((block) => (
-          <div key={block.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div key={block.id} data-block-id={block.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
             <div className="flex justify-between items-center mb-2 gap-3">
-              <input
+                <input
                 type="text"
                 value={block.title}
                 onChange={(e) => updateBlockTitle(block.id, e.target.value)}
@@ -160,7 +191,7 @@ export default function LocalhostPage() {
                   }
                 }}
                 className={`flex-1 text-sm font-medium px-2 py-1 border-b border-gray-200 dark:border-gray-700 focus:outline-none focus:border-blue-500 ${editingBlockId === block.id ? 'bg-black text-white' : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white'}`}
-                placeholder={"Nombre del bloque #jrub..."}
+                placeholder={`Nombre del bloque #${block.tag}...`}
               />
               <div className="flex items-center gap-3">
                 <button
@@ -173,16 +204,18 @@ export default function LocalhostPage() {
                   <span>{editingBlockId === block.id ? 'Guardar' : 'Editar'}</span>
                 </button>
 
-                <button
-                  onClick={() => deleteBlock(block.id)}
-                  className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
-                  aria-label={`Eliminar ${block.title}`}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" aria-hidden="true">
-                    <path d="M9 3a1 1 0 00-1 1v1H4a1 1 0 100 2h16a1 1 0 100-2h-4V4a1 1 0 00-1-1H9zM7 9a1 1 0 011 1v7a2 2 0 002 2h4a2 2 0 002-2v-7a1 1 0 112 0v7a4 4 0 01-4 4h-4a4 4 0 01-4-4v-7a1 1 0 011-1z" />
-                  </svg>
-                  <span>Eliminar</span>
-                </button>
+                {editingBlockId === block.id && (
+                  <button
+                    onClick={() => deleteBlock(block.id)}
+                    className="flex items-center gap-1 text-red-500 hover:text-red-700 text-xs px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                    aria-label={`Eliminar ${block.title}`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" aria-hidden="true">
+                      <path d="M9 3a1 1 0 00-1 1v1H4a1 1 0 100 2h16a1 1 0 100-2h-4V4a1 1 0 00-1-1H9zM7 9a1 1 0 011 1v7a2 2 0 002 2h4a2 2 0 002-2v-7a1 1 0 112 0v7a4 4 0 01-4 4h-4a4 4 0 01-4-4v-7a1 1 0 011-1z" />
+                    </svg>
+                    <span>Eliminar</span>
+                  </button>
+                )}
               </div>
             </div>
 
