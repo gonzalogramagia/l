@@ -1,4 +1,4 @@
-import { BlogPosts } from 'app/components/posts'
+import { BlogPosts } from "app/components/posts";
 
 export default function Page() {
   return (
@@ -7,42 +7,42 @@ export default function Page() {
         Gonza
       </h1>
       <p className="mb-12">
-      ¡Hola! Soy un desarrollador apasionado por el bienestar,
-        que está aprendiendo magia en{' '}
+        ¡Hola! Soy un desarrollador apasionado por el bienestar, que está
+        aprendiendo magia en{" "}
         <a
-          href="https://goalritmo.com"
+          href="https://www.famaf.unc.edu.ar/academica/grado/licenciatura-en-ciencias-de-la-computaci%C3%B3n/"
           target="_blank"
           rel="noopener noreferrer"
-          style={{ 
-            color: '#59A8E7', 
-            display: 'inline',
-            float: 'none',
-            width: 'auto',
-            clear: 'none'
+          style={{
+            color: "#59A8E7",
+            display: "inline",
+            float: "none",
+            width: "auto",
+            clear: "none",
           }}
         >
           FAMAF
         </a>
-        {' y llevandolá a la práctica mediante '}
+        {" y llevandolá a la práctica mediante "}
         <a
           href="https://catsulecorp.com/"
           target="_blank"
           rel="noopener noreferrer"
-          style={{ 
-            color: '#59A8E7', 
-            display: 'inline',
-            float: 'none',
-            width: 'auto',
-            clear: 'none'
+          style={{
+            color: "#59A8E7",
+            display: "inline",
+            float: "none",
+            width: "auto",
+            clear: "none",
           }}
         >
           Catsule Corp
         </a>
-        {' ✨'}
+        {" ✨"}
       </p>
       <div className="my-4">
         <BlogPosts />
       </div>
     </section>
-  )
+  );
 }
