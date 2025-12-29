@@ -4,6 +4,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import { highlight } from 'sugar-high'
 import React from 'react'
 import { CopyableItem } from './copyable-item'
+import { SymbolBrowser } from './symbol-browser'
 
 function CustomLink(props) {
   let href = props.href
@@ -78,6 +79,7 @@ let components = {
   a: CustomLink,
   code: Code,
   CopyableItem: CopyableItem,
+  SymbolBrowser: SymbolBrowser,
 }
 
 export function CustomMDX(props) {
