@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import LoginForm from './components/LoginForm';
-import { WhatsAppService } from '../../lib/services/whatsapp';
-import { WhatsAppMessage } from '../../types/supabase';
+import { WhatsAppService } from '../../../lib/services/whatsapp';
+import { WhatsAppMessage } from '../../../types/supabase';
 
 // Usar el tipo de Supabase en lugar de la interfaz local
 type ScheduledMessage = WhatsAppMessage;

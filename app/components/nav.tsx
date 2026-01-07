@@ -2,7 +2,10 @@ import Link from 'next/link'
 
 const navItems = {
   '/': {
-    name: '🪄',
+    name: 'emojis',
+  },
+  '/home': {
+    name: 'home',
   },
   // '/blog': {
   //   name: 'blog',

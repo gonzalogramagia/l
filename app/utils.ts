@@ -21,7 +21,7 @@ function parseFrontmatter(fileContent: string) {
     let [key, ...valueArr] = line.split(': ')
     let value = valueArr.join(': ').trim()
     value = value.replace(/^['"](.*)['"]$/, '$1') // Remove quotes
-    
+
     const trimmedKey = key.trim() as keyof Metadata
     if (trimmedKey === 'featured') {
       metadata[trimmedKey] = value === 'true'
@@ -57,7 +57,7 @@ function getMDXData(dir) {
 }
 
 export function getBlogPosts() {
-  return getMDXData(path.join(process.cwd(), 'app', 'posts'))
+  return getMDXData(path.join(process.cwd(), 'app', '(default)', 'posts'))
 }
 
 export function getFeaturedPosts() {
