@@ -10,6 +10,18 @@ export function SymbolBrowser() {
     const filteredSymbols = useMemo(() => {
         if (!search.trim()) return symbols;
         const lowerSearch = search.toLowerCase();
+
+        // Check if search matches a category name
+        const matchingCategory = ["Emojis", "Expresiones", "Letras", "Signos"].find(
+            cat => cat.toLowerCase().includes(lowerSearch)
+        );
+
+        // If searching for a category, return all items in that category
+        if (matchingCategory) {
+            return symbols.filter(item => item.category === matchingCategory);
+        }
+
+        // Otherwise, search in symbol and description
         return symbols.filter(
             (item) =>
                 item.symbol.toLowerCase().includes(lowerSearch) ||
@@ -20,6 +32,7 @@ export function SymbolBrowser() {
     const groupedSymbols = useMemo(() => {
         const groups: Record<string, SymbolItem[]> = {
             Emojis: [],
+            Expresiones: [],
             Signos: [],
             Letras: [],
         };
@@ -33,7 +46,7 @@ export function SymbolBrowser() {
         return groups;
     }, [filteredSymbols]);
 
-    const categories = ["Emojis", "Signos", "Letras"];
+    const categories = ["Emojis", "Expresiones", "Letras", "Signos"];
 
     return (
         <div className="space-y-8">
