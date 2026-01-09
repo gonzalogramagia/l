@@ -1,8 +1,4 @@
-import { SymbolBrowser } from "app/components/symbol-browser";
-
-export const metadata = {
-  description: "Una colección de letras, signos y emojis acentuadas que uso frecuentemente, organizadas para facilitar su copia al portapapeles",
-};
+import { SymbolBrowser } from "../components/symbol-browser";
 
 export default function EmojisPage() {
   return (
