@@ -2,27 +2,25 @@ import './global.css'
 import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
-import { Analytics } from '@vercel/analytics/react'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 import { baseUrl } from './sitemap'
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Gonza',
-    template: 'Gonza',
+    default: 'Emojis',
+    template: '%s | Emojis',
   },
-  description: 'Desarrollador apasionado por el bienestar, que está aprendiendo magia en FAMAF y llevandolá a la práctica mediante Catsule Corp.',
+  description: 'Colección de emojis y símbolos para copiar y pegar.',
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
   openGraph: {
-    title: 'Gonza',
-    description: 'Desarrollador apasionado por el bienestar, que está aprendiendo magia en FAMAF y llevandolá a la práctica mediante Catsule Corp.',
+    title: 'Emojis',
+    description: 'Colección de emojis y símbolos para copiar y pegar.',
     url: baseUrl,
-    siteName: 'Gonza',
+    siteName: 'Emojis',
     locale: 'es_ES',
     type: 'website',
   },
@@ -57,8 +55,6 @@ export default function RootLayout({
     >
       <body className="antialiased">
         {children}
-        <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   )

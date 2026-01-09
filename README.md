@@ -1,15 +1,20 @@
-# Gonza
+# Emojis
 
-Desarrollador apasionado por el bienestar, que está aprendiendo magia en FAMAF y llevandolá a la práctica mediante Catsule Corp.
+Colección de emojis y símbolos para copiar y pegar rápidamente.
 
 ## Características
 
-- Blog personal con MDX y Markdown
-- Optimizado para SEO (sitemap, robots, JSON-LD schema)
-- Feed RSS
-- Imágenes OG dinámicas
-- Resaltado de sintaxis
-- Tailwind CSS v4
-- Analytics de Vercel
-- Fuente Geist
-- **Integración con ClickUp** - Visualizo mis tareas de forma personalizada en `/clickup` (ingresando una contraseña que configuro en el archivo `.env`)
+- 🔎 **Buscador inteligente**: Encuentra emojis por nombre, descripción o etiquetas (ej: "Comida", "Deportes", "Estudio", "Cuerpo").
+- 📋 **Copiar y pegar**: Haz clic en cualquier emoji para copiarlo al portapapeles.
+- 📂 **Categorías**: Organizado en Letras, Signos, Emojis y Expresiones.
+- ⚡ **Rápido y ligero**: Construido con Next.js y Tailwind CSS.
+
+## Tecnologías
+
+- Next.js
+- Tailwind CSS
+- TypeScript
+
+## Uso
+
+Simplemente visita la página, busca el emoji que necesitas y haz clic para copiarlo.

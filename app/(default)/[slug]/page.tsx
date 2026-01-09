@@ -80,29 +80,29 @@ export default async function Blog({ params }) {
             url: `${baseUrl}/${slug}`,
             author: {
               '@type': 'Person',
-              name: 'Gonza',
+              name: 'Emojis',
             },
           }),
         }}
       />
       <div className="-mt-12 pt-7">
-         <Link
-           href="/"
-           className="inline-flex items-center text-sm mb-12 transition-colors"
-           style={{ color: 'var(--tw-color-neutral-900) !important' }}
-         >
-          <svg 
-            className="w-4 h-4 mr-1" 
-            fill="none" 
+        <Link
+          href="/"
+          className="inline-flex items-center text-sm mb-12 transition-colors"
+          style={{ color: 'var(--tw-color-neutral-900) !important' }}
+        >
+          <svg
+            className="w-4 h-4 mr-1"
+            fill="none"
             stroke="#fbbf24"
-            style={{ stroke: '#fbbf24' }} 
+            style={{ stroke: '#fbbf24' }}
             viewBox="0 0 24 24"
           >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M15 19l-7-7 7-7" 
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
             />
           </svg>
           Volver
@@ -120,23 +120,23 @@ export default async function Blog({ params }) {
         <CustomMDX source={post.content} />
       </article>
       <div className="mt-8 my-4">
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="inline-flex items-center text-sm transition-colors"
           style={{ color: 'var(--tw-color-neutral-900) !important' }}
         >
-          <svg 
-            className="w-4 h-4 mr-1" 
-            fill="none" 
+          <svg
+            className="w-4 h-4 mr-1"
+            fill="none"
             stroke="#fbbf24"
-            style={{ stroke: '#fbbf24' }} 
+            style={{ stroke: '#fbbf24' }}
             viewBox="0 0 24 24"
           >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M15 19l-7-7 7-7" 
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
             />
           </svg>
           Volver

@@ -25,7 +25,8 @@ export function SymbolBrowser() {
         return symbols.filter(
             (item) =>
                 item.symbol.toLowerCase().includes(lowerSearch) ||
-                item.description.toLowerCase().includes(lowerSearch)
+                item.description.toLowerCase().includes(lowerSearch) ||
+                item.tags?.some((tag) => tag.toLowerCase().includes(lowerSearch))
         );
     }, [search]);
 

@@ -9,7 +9,7 @@ interface TextBlock {
   content: string;
 }
 
-export default function LocalhostPage() {
+export default function LocalPage() {
   const [blocks, setBlocks] = useState<TextBlock[]>([]);
   const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState("");
@@ -190,7 +190,7 @@ export default function LocalhostPage() {
     <section className="mb-8">
       <div className="mb-8">
         <h1 className="mb-4 text-2xl font-semibold tracking-tighter">
-          Localhost Notes
+          Local Notes
         </h1>
         <p className="mb-6 text-gray-600 dark:text-gray-400">
           Bloque de notas que se guardan automáticamente en tu navegador
@@ -252,11 +252,10 @@ export default function LocalhostPage() {
                       }
                     }
                   }}
-                  className={`flex-1 text-sm font-medium px-2 py-1 border-b border-gray-200 dark:border-gray-700 focus:outline-none focus:border-blue-500 ${
-                    editingBlockId === block.id
+                  className={`flex-1 text-sm font-medium px-2 py-1 border-b border-gray-200 dark:border-gray-700 focus:outline-none focus:border-blue-500 ${editingBlockId === block.id
                       ? "bg-black text-white"
                       : "bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                  }`}
+                    }`}
                   placeholder={`Nombre del bloque #${block.tag}...`}
                 />
                 <div className="flex items-center gap-3">
