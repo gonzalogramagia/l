@@ -2,7 +2,7 @@ import './global.css'
 import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
-import { baseUrl } from './sitemap'
+const baseUrl = 'https://emojis.gonzalogramagia.com'
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -53,7 +53,7 @@ export default function RootLayout({
         GeistMono.variable
       )}
     >
-      <body className="antialiased">
+      <body className="antialiased" suppressHydrationWarning>
         {children}
       </body>
     </html>

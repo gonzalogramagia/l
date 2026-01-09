@@ -1,7 +1,6 @@
 import { SymbolBrowser } from "app/components/symbol-browser";
 
 export const metadata = {
-  title: "Emojis",
   description: "Una colección de letras, signos y emojis acentuadas que uso frecuentemente, organizadas para facilitar su copia al portapapeles",
 };
 
