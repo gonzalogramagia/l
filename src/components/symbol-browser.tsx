@@ -9,12 +9,12 @@ function LanguageSwitch() {
     const { language, setLanguage } = useLanguage();
 
     return (
-        <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-full w-fit">
+        <div className="flex items-center gap-2 bg-neutral-100 p-1 rounded-full w-fit">
             <button
                 onClick={() => setLanguage("es")}
                 className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${language === "es"
-                    ? "bg-white dark:bg-gray-700 shadow-sm text-blue-600 dark:text-blue-400"
-                    : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    ? "bg-white shadow-sm text-blue-600"
+                    : "text-neutral-500 hover:text-neutral-700"
                     }`}
             >
                 ES
@@ -22,8 +22,8 @@ function LanguageSwitch() {
             <button
                 onClick={() => setLanguage("en")}
                 className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${language === "en"
-                    ? "bg-white dark:bg-gray-700 shadow-sm text-blue-600 dark:text-blue-400"
-                    : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    ? "bg-white shadow-sm text-blue-600"
+                    : "text-neutral-500 hover:text-neutral-700"
                     }`}
             >
                 EN
@@ -54,7 +54,17 @@ export function SymbolBrowser() {
     }, [copiedSymbol]);
 
     const filteredSymbols = useMemo(() => {
-        if (!search.trim()) return symbols;
+        let currentSymbols = symbols;
+
+        if (language === 'en') {
+            currentSymbols = currentSymbols.filter(item =>
+                item.category !== "Letras" &&
+                item.symbol !== "¡" &&
+                item.symbol !== "¿"
+            );
+        }
+
+        if (!search.trim()) return currentSymbols;
         const lowerSearch = search.toLowerCase();
 
         const categories = ["Emojis", "Expresiones", "Letras", "Signos"];
@@ -63,10 +73,10 @@ export function SymbolBrowser() {
         );
 
         if (matchingCategory) {
-            return symbols.filter(item => item.category === matchingCategory);
+            return currentSymbols.filter(item => item.category === matchingCategory);
         }
 
-        return symbols.filter(
+        return currentSymbols.filter(
             (item) =>
                 item.symbol.toLowerCase().includes(lowerSearch) ||
                 item.description[language].main.toLowerCase().includes(lowerSearch) ||
@@ -84,7 +94,11 @@ export function SymbolBrowser() {
             Expresiones: [],
             Signos: [],
             Letras: [],
+            "Nuevos": [],
         };
+
+        // Ensure "Nuevos" category exists in symbols data, or handle it here if it's dynamic
+        // Based on previous file reads, categories are: Emojis, Expresiones, Signos, Letras
 
         filteredSymbols.forEach((item) => {
             if (groups[item.category]) {
@@ -99,7 +113,7 @@ export function SymbolBrowser() {
 
     return (
         <div className="space-y-8">
-            <div className="sticky top-0 z-10 bg-white dark:bg-black py-4 border-b border-gray-200 dark:border-gray-800">
+            <div className="sticky top-0 z-10 bg-white py-4 border-b border-neutral-200">
                 <div className="flex items-center gap-4">
                     <div className="relative flex-1">
                         <input
@@ -107,7 +121,7 @@ export function SymbolBrowser() {
                             placeholder={t("search.placeholder")}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                            className="w-full px-4 py-2 rounded-lg border border-neutral-300 bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-neutral-900"
                         />
                     </div>
                     <LanguageSwitch />
@@ -116,11 +130,11 @@ export function SymbolBrowser() {
 
             {categories.map((category) => {
                 const items = groupedSymbols[category];
-                if (items.length === 0) return null;
+                if (!items || items.length === 0) return null;
 
                 return (
                     <section key={category}>
-                        <h2 className="text-xl font-bold mb-4">{t(`category.${category}`)}</h2>
+                        <h2 className="text-xl font-bold mb-4 text-neutral-900">{t(`category.${category}`)}</h2>
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                             {items.map((item, index) => {
                                 const isCopied = copiedSymbol === item.symbol;
@@ -128,9 +142,9 @@ export function SymbolBrowser() {
                                     <button
                                         key={`${item.symbol}-${index}`}
                                         onClick={() => handleCopy(item.symbol)}
-                                        className="flex items-center gap-3 p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-900 transition-all text-left group overflow-hidden cursor-pointer"
+                                        className="flex items-center gap-3 p-2 rounded hover:bg-neutral-50 transition-all text-left group overflow-hidden cursor-pointer"
                                     >
-                                        <div className="text-2xl min-w-[2.5rem] h-10 flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded group-hover:bg-white dark:group-hover:bg-gray-800 transition-colors">
+                                        <div className="text-2xl min-w-[2.5rem] h-10 flex items-center justify-center bg-neutral-50 rounded group-hover:bg-white transition-colors text-neutral-900">
                                             {isCopied ? (
                                                 <Check className="w-6 h-6 text-green-500 animate-in zoom-in duration-200" />
                                             ) : (
@@ -138,32 +152,19 @@ export function SymbolBrowser() {
                                             )}
                                         </div>
                                         <div className="flex flex-col min-w-0">
-                                            <span className={`text-sm font-medium truncate transition-colors ${isCopied ? "text-green-600 dark:text-green-400" : "text-gray-900 dark:text-gray-100"}`}>
+                                            <span className={`text-sm font-medium truncate transition-colors ${isCopied ? "text-green-600" : "text-neutral-900"}`}>
                                                 {isCopied ? t("copy.feedback") : item.description[language].main}
                                             </span>
                                             {item.tags?.[language] && item.tags[language].length > 0 && !isCopied && (
-                                                <div className="relative mt-0.5">
-                                                    <div className="flex flex-nowrap gap-1 overflow-hidden max-w-full">
-                                                        {item.tags[language].map((tag, tagIndex) => (
-                                                            <span key={tagIndex} className="text-[10px] text-gray-400 dark:text-gray-500 whitespace-nowrap">
-                                                                #{tag}
-                                                            </span>
-                                                        ))}
-                                                        {item.tags[language].length > 1 && (
-                                                            <span className="text-[10px] text-gray-400 dark:text-gray-500">...</span>
-                                                        )}
-                                                    </div>
-
-                                                    {/* Tooltip */}
-                                                    <div className="absolute left-0 top-full mt-1 p-2 bg-white dark:bg-gray-800 rounded shadow-lg border border-gray-100 dark:border-gray-700 z-50 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 min-w-[120px]">
-                                                        <div className="flex flex-col gap-1">
-                                                            {item.tags[language].map((tag, tagIndex) => (
-                                                                <span key={tagIndex} className="text-[10px] text-gray-600 dark:text-gray-300 whitespace-nowrap">
-                                                                    #{tag}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    </div>
+                                                <div className="flex flex-nowrap gap-1 overflow-hidden max-w-full">
+                                                    {item.tags[language].map((tag, tagIndex) => (
+                                                        <span key={tagIndex} className="text-[10px] text-neutral-400 whitespace-nowrap">
+                                                            #{tag}
+                                                        </span>
+                                                    ))}
+                                                    {item.tags[language].length > 1 && (
+                                                        <span className="text-[10px] text-neutral-400">...</span>
+                                                    )}
                                                 </div>
                                             )}
                                         </div>
@@ -176,7 +177,7 @@ export function SymbolBrowser() {
             })}
 
             {filteredSymbols.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-neutral-500">
                     {t("search.no_results").replace("{search}", search)}
                 </div>
             )}

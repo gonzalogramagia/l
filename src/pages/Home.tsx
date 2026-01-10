@@ -10,7 +10,7 @@ export default function EmojisPage() {
 
       <br />
 
-      <p className="text-neutral-600 dark:text-neutral-400">
+      <p className="text-neutral-600">
         {t("link.more_emojis")}{" "}
         <a
           href="https://es.piliapp.com/twitter-symbols/"

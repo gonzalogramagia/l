@@ -4,17 +4,12 @@ A collection of emojis and symbols for quick copy and pasting, designed to be fa
 
 ## Features ✨
 
-- 🌐 **Internationalization**: Full support for Spanish 🇪🇸 and English 🇺🇸 via toggle.
-- 🔎 **Powerful Search**:
-  - Search by name, category, or tags.
-  - **Smart Orthography**: Find "cigüeña" by searching "ciguena", or "música" with "musica".
-  - **Multi-tag**: Exhaustively tagged emojis (e.g., #Math, #Programming, #Gestures).
-- 📋 **Click to Copy**: Instant copy to clipboard with visual feedback.
-- 🎨 **Refined UI**: 
-  - Automatic **Dark Mode**.
-  - Tooltips to view all tags.
-  - Smooth infinite scroll.
-- 📂 **Clear Categories**: Letters, Signs (with specific tags), Emojis, and translated Expressions.
+- 🌐 **Internationalization**: Seamless toggle between Spanish 🇪🇸 and English 🇺🇸.
+- 🔎 **Smart Search**: Find emojis by name, category, or semantic tags (e.g., #Math, #Office).
+- 📋 **Instant Copy**: One-click copy with immediate visual feedback.
+- 🎨 **Clean UI**: Minimalist design with a focus on usability.
+- 📂 **Organized Library**: Structured categories for Emojis, Expressions, Letters, and Signs.
+- ⬇️ **Smart Navigation**: Context-aware floating button for easy scrolling.
 
 ## Technologies 🛠️
 
@@ -25,10 +20,10 @@ A collection of emojis and symbols for quick copy and pasting, designed to be fa
 
 ## Usage 📖
 
-1. **Search**: Type what you need (e.g., "arrow", "flecha", "programming").
+1. **Search**: Type what you need (e.g., "Handshake", "Tools", "Rocket").
 2. **Copy**: Click on the emoji.
 3. **Paste**: Ready to use anywhere!
 
 ---
 
-Made with ❤️ by [Gonzalo Gramagia](https://github.com/gonzalogramagia)
+Made with 💛 by [Gonza](https://github.com/gonzalogramagia)

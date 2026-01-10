@@ -18,10 +18,10 @@ function ArrowIcon() {
 export default function Footer() {
   return (
     <footer className="mb-16">
-      <ul className="font-sm mt-8 flex flex-row flex-wrap gap-4 text-neutral-600 dark:text-neutral-300">
+      <ul className="font-sm mt-8 flex flex-row flex-wrap gap-4 text-neutral-600">
         <li>
           <a
-            className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
+            className="flex items-center transition-all hover:text-neutral-800"
             rel="noopener noreferrer"
             target="_blank"
             href="https://www.linkedin.com/in/gonzalogramagia"
@@ -32,7 +32,7 @@ export default function Footer() {
         </li>
         <li>
           <a
-            className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
+            className="flex items-center transition-all hover:text-neutral-800"
             rel="noopener noreferrer"
             target="_blank"
             href="https://medium.com/@gonzalogramagia"
@@ -43,7 +43,7 @@ export default function Footer() {
         </li>
         <li>
           <a
-            className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
+            className="flex items-center transition-all hover:text-neutral-800"
             rel="noopener noreferrer"
             target="_blank"
             href="https://www.youtube.com/@gonzalogramagia"
@@ -54,7 +54,7 @@ export default function Footer() {
         </li>
         <li>
           <a
-            className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
+            className="flex items-center transition-all hover:text-neutral-800"
             rel="noopener noreferrer"
             target="_blank"
             href="https://x.com/gonzalogramagia"
@@ -65,7 +65,7 @@ export default function Footer() {
         </li>
         <li>
           <a
-            className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
+            className="flex items-center transition-all hover:text-neutral-800"
             rel="noopener noreferrer"
             target="_blank"
             href="https://github.com/gonzalogramagia"
@@ -76,7 +76,7 @@ export default function Footer() {
         </li>
         <li>
           <a
-            className="flex items-center transition-all hover:text-neutral-800 dark:hover:text-neutral-100"
+            className="flex items-center transition-all hover:text-neutral-800"
             rel="noopener noreferrer"
             target="_blank"
             href="https://gonzalogramagia.com"
@@ -86,7 +86,7 @@ export default function Footer() {
           </a>
         </li>
       </ul>
-      <p className="mt-8 text-neutral-600 dark:text-neutral-300">
+      <p className="mt-8 text-neutral-600">
         © {new Date().getFullYear()} | Mens sana in corpore sano
       </p>
     </footer>

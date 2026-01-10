@@ -17,10 +17,10 @@ function AppContent() {
                 href="https://github.com/gonzalogramagia/emojis"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="fixed bottom-8 right-8 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 group z-50 flex items-center justify-center"
+                className="fixed bottom-8 right-8 p-3 bg-white border border-gray-200 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 group z-50 flex items-center justify-center"
                 aria-label="GitHub Repository"
             >
-                <Github className="w-6 h-6 text-gray-900 dark:text-white group-hover:text-blue-500 transition-colors" />
+                <Github className="w-6 h-6 text-gray-900 group-hover:text-blue-500 transition-colors" />
             </a>
         </div>
     );
