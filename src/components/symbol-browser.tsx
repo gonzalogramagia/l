@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { symbols, SymbolItem } from "../data/symbols";
 import { useLanguage } from "../contexts/language-context";
-import { Check } from "lucide-react";
+import { Check, SearchX } from "lucide-react";
 
 function LanguageSwitch() {
     const { language, setLanguage } = useLanguage();
@@ -177,8 +177,16 @@ export function SymbolBrowser() {
             })}
 
             {filteredSymbols.length === 0 && (
-                <div className="text-center py-8 text-neutral-500">
-                    {t("search.no_results").replace("{search}", search)}
+                <div className="flex flex-col items-center justify-center py-12 text-neutral-500 space-y-4">
+                    <div className="bg-neutral-100 p-4 rounded-full">
+                        <SearchX className="w-8 h-8 text-neutral-400" />
+                    </div>
+                    <div className="text-center text-neutral-500">
+                        <p className="font-bold text-lg mb-1">
+                            {t("search.no_results").replace('"{search}"', '').trim()}
+                        </p>
+                        <p className="text-lg">"{search}"</p>
+                    </div>
                 </div>
             )}
         </div>

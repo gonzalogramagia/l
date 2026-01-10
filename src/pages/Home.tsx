@@ -10,21 +10,17 @@ export default function EmojisPage() {
 
       <br />
 
-      <p className="text-neutral-600">
+      <p className="text-neutral-600 mt-6">
         {t("link.more_emojis")}{" "}
         <a
-          href="https://es.piliapp.com/twitter-symbols/"
+          href="https://piliapp.com/twitter-symbols"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 hover:underline"
         >
-          https://es.piliapp.com/twitter-symbols/
+          https://piliapp.com/twitter-symbols
         </a>
       </p>
-
-      <br />
-      <br />
-      <br />
       <br />
     </section>
   );
