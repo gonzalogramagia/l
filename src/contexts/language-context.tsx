@@ -39,24 +39,19 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const location = useLocation();
 
     // Derive language from URL
-    const getLanguageFromPath = (path: string): Language | null => {
-        if (path === "/en" || path === "/en/") return "en";
-        if (path === "/es" || path === "/es/") return "es";
-        return null;
+    const getLanguageFromPath = (path: string): Language => {
+        if (path.startsWith("/en")) return "en";
+        return "es";
     };
 
-    const urlLanguage = getLanguageFromPath(location.pathname);
-
-    // Default to 'es' if URL is invalid (will be fixed by useEffect)
-    const language: Language = urlLanguage || "es";
+    const language = getLanguageFromPath(location.pathname);
 
     useEffect(() => {
-        if (!urlLanguage) {
-            const saved = localStorage.getItem("language");
-            const defaultLang = (saved === "es" || saved === "en") ? saved : (navigator.language.startsWith("es") ? "es" : "en");
-            navigate(`/${defaultLang}`, { replace: true });
+        // Redirect /es to /
+        if (location.pathname.startsWith("/es")) {
+            navigate("/", { replace: true });
         }
-    }, [urlLanguage, navigate]);
+    }, [location.pathname, navigate]);
 
     useEffect(() => {
         localStorage.setItem("language", language);
@@ -65,7 +60,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
     const setLanguage = (lang: Language) => {
         if (lang !== language) {
-            navigate(`/${lang}`);
+            navigate(lang === "en" ? "/en" : "/");
         }
     };
 
