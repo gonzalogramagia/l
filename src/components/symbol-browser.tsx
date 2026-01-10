@@ -67,7 +67,7 @@ export function SymbolBrowser() {
         if (!search.trim()) return currentSymbols;
         const lowerSearch = search.toLowerCase();
 
-        const categories = ["Emojis", "Expresiones", "Letras", "Signos"];
+        const categories = ["Emojis", "Expresiones", "Letras", "Simbolos"];
         const matchingCategory = categories.find(
             cat => t(`category.${cat}`).toLowerCase().includes(lowerSearch) || cat.toLowerCase().includes(lowerSearch)
         );
@@ -92,7 +92,7 @@ export function SymbolBrowser() {
         const groups: Record<string, SymbolItem[]> = {
             Emojis: [],
             Expresiones: [],
-            Signos: [],
+            Simbolos: [],
             Letras: [],
             "Nuevos": [],
         };
@@ -109,7 +109,7 @@ export function SymbolBrowser() {
         return groups;
     }, [filteredSymbols]);
 
-    const categories = ["Emojis", "Expresiones", "Letras", "Signos"];
+    const categories = ["Emojis", "Expresiones", "Letras", "Simbolos"];
 
     return (
         <div className="space-y-8">
