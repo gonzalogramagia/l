@@ -32,7 +32,7 @@ export function ScrollToBottom() {
     return (
         <button
             onClick={scrollToBottom}
-            className="fixed bottom-8 right-8 z-50 p-3 bg-neutral-900 text-white rounded-full shadow-lg hover:bg-neutral-700 transition-colors animate-occasional-bounce dark:bg-neutral-100 dark:text-black dark:hover:bg-neutral-300 cursor-pointer"
+            className="fixed bottom-8 left-8 z-50 p-3 bg-neutral-900 text-white rounded-full shadow-lg hover:bg-neutral-700 transition-colors animate-occasional-bounce dark:bg-neutral-100 dark:text-black dark:hover:bg-neutral-300 cursor-pointer"
             aria-label="Scroll to bottom"
         >
             <svg

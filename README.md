@@ -1,20 +1,34 @@
-# Emojis
+# Emojis 🚀
 
-Colección de emojis y símbolos para copiar y pegar rápidamente.
+A collection of emojis and symbols for quick copy and pasting, designed to be fast, accessible, and global.
 
-## Características
+## Features ✨
 
-- 🔎 **Buscador inteligente**: Encuentra emojis por nombre, descripción o etiquetas (ej: "Comida", "Deportes", "Estudio", "Cuerpo").
-- 📋 **Copiar y pegar**: Haz clic en cualquier emoji para copiarlo al portapapeles.
-- 📂 **Categorías**: Organizado en Letras, Signos, Emojis y Expresiones.
-- ⚡ **Rápido y ligero**: Construido con Next.js y Tailwind CSS.
+- 🌐 **Internationalization**: Full support for Spanish 🇪🇸 and English 🇺🇸 via toggle.
+- 🔎 **Powerful Search**:
+  - Search by name, category, or tags.
+  - **Smart Orthography**: Find "cigüeña" by searching "ciguena", or "música" with "musica".
+  - **Multi-tag**: Exhaustively tagged emojis (e.g., #Math, #Programming, #Gestures).
+- 📋 **Click to Copy**: Instant copy to clipboard with visual feedback.
+- 🎨 **Refined UI**: 
+  - Automatic **Dark Mode**.
+  - Tooltips to view all tags.
+  - Smooth infinite scroll.
+- 📂 **Clear Categories**: Letters, Signs (with specific tags), Emojis, and translated Expressions.
 
-## Tecnologías
+## Technologies 🛠️
 
-- Next.js
-- Tailwind CSS
-- TypeScript
+- **Vite** + **React**
+- **TypeScript**
+- **Tailwind CSS**
+- **Geist Font**
 
-## Uso
+## Usage 📖
 
-Simplemente visita la página, busca el emoji que necesitas y haz clic para copiarlo.
+1. **Search**: Type what you need (e.g., "arrow", "flecha", "programming").
+2. **Copy**: Click on the emoji.
+3. **Paste**: Ready to use anywhere!
+
+---
+
+Made with ❤️ by [Gonzalo Gramagia](https://github.com/gonzalogramagia)

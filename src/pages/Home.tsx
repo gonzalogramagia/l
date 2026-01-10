@@ -1,6 +1,9 @@
 import { SymbolBrowser } from "../components/symbol-browser";
+import { useLanguage } from "../contexts/language-context";
 
 export default function EmojisPage() {
+  const { t } = useLanguage();
+
   return (
     <section>
       <SymbolBrowser />
@@ -8,7 +11,7 @@ export default function EmojisPage() {
       <br />
 
       <p className="text-neutral-600 dark:text-neutral-400">
-        Más emojis en:{" "}
+        {t("link.more_emojis")}{" "}
         <a
           href="https://es.piliapp.com/twitter-symbols/"
           target="_blank"
