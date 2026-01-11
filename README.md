@@ -29,7 +29,7 @@
 
 ---
 
-## � Usage
+## 🕹 Usage
 
 ### 🔎 Finding Symbols
 - **Search**: Type what you need (e.g., "Handshake", "Tools") in the search bar.
