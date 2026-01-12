@@ -21,6 +21,9 @@ const translations = {
         "category.Letras": "Letras",
         "copy.feedback": "¡Copiado!",
         "link.more_emojis": "Más emojis en:",
+        "ariaHome": "Inicio",
+        "ariaEmojis": "Emojis",
+        "ariaMusic": "Música",
     },
     en: {
         "search.placeholder": "Search emoji by name or categories...",
@@ -31,6 +34,9 @@ const translations = {
         "category.Letras": "Letters",
         "copy.feedback": "Copied!",
         "link.more_emojis": "More emojis at:",
+        "ariaHome": "Home",
+        "ariaEmojis": "Emojis",
+        "ariaMusic": "Music",
     },
 };
 

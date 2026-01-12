@@ -1,6 +1,6 @@
 import Home from './pages/Home'
 import Footer from './components/footer'
-import { LocalNoteLink } from './components/local-note-link'
+import { FloatingLinks } from './components/floating-links'
 import { LanguageProvider } from './contexts/language-context'
 import { Github } from 'lucide-react'
 
@@ -10,7 +10,7 @@ function AppContent() {
             <main className="flex-auto min-w-0 mt-6 flex flex-col px-8 lg:px-0">
                 <Home />
                 <Footer />
-                <LocalNoteLink />
+                <FloatingLinks />
             </main>
 
             <a
