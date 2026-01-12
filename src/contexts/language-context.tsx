@@ -21,9 +21,10 @@ const translations = {
         "category.Letras": "Letras",
         "copy.feedback": "¡Copiado!",
         "link.more_emojis": "Más emojis en:",
-        "ariaHome": "Inicio",
-        "ariaEmojis": "Emojis",
-        "ariaMusic": "Música",
+        "ariaHome": "Ir a Home",
+        "ariaEmojis": "Ir a Emojis",
+        "ariaMusic": "Ir a Música",
+        "ariaTasks": "Ir a Tareas",
     },
     en: {
         "search.placeholder": "Search emoji by name or categories...",
@@ -34,9 +35,10 @@ const translations = {
         "category.Letras": "Letters",
         "copy.feedback": "Copied!",
         "link.more_emojis": "More emojis at:",
-        "ariaHome": "Home",
-        "ariaEmojis": "Emojis",
-        "ariaMusic": "Music",
+        "ariaHome": "Go to Home",
+        "ariaEmojis": "Go to Emojis",
+        "ariaMusic": "Go to Music",
+        "ariaTasks": "Go to Tasks",
     },
 };
 
