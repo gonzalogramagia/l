@@ -1,11 +1,12 @@
 
 export default function Footer() {
   return (
-    <footer className="mb-16">
-      <ul className="font-sm mt-8 flex flex-row flex-wrap gap-4 text-neutral-600">
+    <footer className="mb-16 mt-4 flex flex-col items-center w-full max-w-5xl mx-auto px-4">
+      <div className="w-full border-t border-neutral-200 mb-16" />
+      <ul className="font-sm flex flex-row flex-wrap gap-4 text-neutral-600">
       </ul>
-      <p className="mt-8 text-neutral-600">
-        © {new Date().getFullYear()} | Mens sana in corpore sano
+      <p className="text-neutral-600 text-center">
+        © 2026 | Mens sana in corpore sano
       </p>
     </footer>
   )

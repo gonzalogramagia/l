@@ -1,7 +1,7 @@
 
 
 import { useState, useMemo, useEffect } from "react";
-import { symbols, SymbolItem } from "../data/symbols";
+import { symbols } from "../data/symbols";
 import { useLanguage } from "../contexts/language-context";
 import { Check, SearchX, X, Hash } from "lucide-react";
 
@@ -115,7 +115,7 @@ export function SymbolBrowser() {
     }, [search, language, t, activeTag]);
 
     const contextualTags = useMemo(() => {
-        if (!search.trim() && !activeTag) return [];
+        if (!search.trim() && !activeTag) return ["Expresiones", "Simbolos"]; // Default tags
 
         const tagCounts = new Map<string, number>();
         filteredSymbols.forEach(item => {
@@ -144,28 +144,9 @@ export function SymbolBrowser() {
         setExpandedTags(false);
     };
 
-    const groupedSymbols = useMemo(() => {
-        const groups: Record<string, SymbolItem[]> = {
-            Emojis: [],
-            Expresiones: [],
-            Simbolos: [],
-            Letras: [],
-            "Nuevos": [],
-        };
 
-        // Ensure "Nuevos" category exists in symbols data, or handle it here if it's dynamic
-        // Based on previous file reads, categories are: Emojis, Expresiones, Signos, Letras
 
-        filteredSymbols.forEach((item) => {
-            if (groups[item.category]) {
-                groups[item.category].push(item);
-            }
-        });
 
-        return groups;
-    }, [filteredSymbols]);
-
-    const categories = ["Emojis", "Expresiones", "Letras", "Simbolos"];
 
     return (
         <div className="space-y-8">
@@ -254,55 +235,45 @@ export function SymbolBrowser() {
                 )}
             </div>
 
-            {
-                categories.map((category) => {
-                    const items = groupedSymbols[category];
-                    if (!items || items.length === 0) return null;
-
-                    return (
-                        <section key={category}>
-                            <h2 className="text-xl font-bold mb-4 text-neutral-900">{t(`category.${category}`)}</h2>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                {items.map((item, index) => {
-                                    const isCopied = copiedSymbol === item.symbol;
-                                    return (
-                                        <button
-                                            key={`${item.symbol}-${index}`}
-                                            onClick={() => handleCopy(item.symbol)}
-                                            className="flex items-center gap-3 p-2 rounded hover:bg-neutral-50 transition-all text-left group overflow-hidden cursor-pointer"
-                                        >
-                                            <div className="text-2xl min-w-[2.5rem] h-10 flex items-center justify-center bg-neutral-50 rounded group-hover:bg-white transition-colors text-neutral-900">
-                                                {isCopied ? (
-                                                    <Check className="w-6 h-6 text-green-500 animate-in zoom-in duration-200" />
-                                                ) : (
-                                                    item.symbol
-                                                )}
-                                            </div>
-                                            <div className="flex flex-col min-w-0">
-                                                <span className={`text-sm font-medium truncate transition-colors ${isCopied ? "text-green-600" : "text-neutral-900"}`}>
-                                                    {isCopied ? t("copy.feedback") : item.description[language].main}
+            <section>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {filteredSymbols.map((item, index) => {
+                        const isCopied = copiedSymbol === item.symbol;
+                        return (
+                            <button
+                                key={`${item.symbol}-${index}`}
+                                onClick={() => handleCopy(item.symbol)}
+                                className="flex items-center gap-3 p-2 rounded hover:bg-neutral-50 transition-all text-left group overflow-hidden cursor-pointer"
+                            >
+                                <div className="text-2xl min-w-[2.5rem] h-10 flex items-center justify-center bg-neutral-50 rounded group-hover:bg-white transition-colors text-neutral-900">
+                                    {isCopied ? (
+                                        <Check className="w-6 h-6 text-green-500 animate-in zoom-in duration-200" />
+                                    ) : (
+                                        item.symbol
+                                    )}
+                                </div>
+                                <div className="flex flex-col min-w-0">
+                                    <span className={`text-sm font-medium truncate transition-colors ${isCopied ? "text-green-600" : "text-neutral-900"}`}>
+                                        {isCopied ? t("copy.feedback") : item.description[language].main}
+                                    </span>
+                                    {item.tags?.[language] && item.tags[language].length > 0 && !isCopied && (
+                                        <div className="flex flex-nowrap gap-1 overflow-hidden max-w-full">
+                                            {item.tags[language].map((tag, tagIndex) => (
+                                                <span key={tagIndex} className="text-[10px] text-neutral-400 whitespace-nowrap">
+                                                    #{tag}
                                                 </span>
-                                                {item.tags?.[language] && item.tags[language].length > 0 && !isCopied && (
-                                                    <div className="flex flex-nowrap gap-1 overflow-hidden max-w-full">
-                                                        {item.tags[language].map((tag, tagIndex) => (
-                                                            <span key={tagIndex} className="text-[10px] text-neutral-400 whitespace-nowrap">
-                                                                #{tag}
-                                                            </span>
-                                                        ))}
-                                                        {item.tags[language].length > 1 && (
-                                                            <span className="text-[10px] text-neutral-400">...</span>
-                                                        )}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </section>
-                    );
-                })
-            }
+                                            ))}
+                                            {item.tags[language].length > 1 && (
+                                                <span className="text-[10px] text-neutral-400">...</span>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </button>
+                        );
+                    })}
+                </div>
+            </section>
 
             {
                 filteredSymbols.length === 0 && (
@@ -315,6 +286,16 @@ export function SymbolBrowser() {
                                 {activeTag ? t("search.no_results").replace('"{search}"', '').trim() : t("search.no_results").replace('"{search}"', '').trim()}
                             </p>
                             <p className="text-lg">"{activeTag ? `#${activeTag}` : search}"</p>
+                        </div>
+                        <div className="pt-4">
+                            <a
+                                href="https://piliapp.com/twitter-symbols"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:underline text-center block"
+                            >
+                                {t("link.more_emojis")} https://piliapp.com/twitter-symbols
+                            </a>
                         </div>
                     </div>
                 )

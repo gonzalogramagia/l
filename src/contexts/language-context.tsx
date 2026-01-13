@@ -20,7 +20,7 @@ const translations = {
         "category.Simbolos": "Símbolos",
         "category.Letras": "Letras",
         "copy.feedback": "¡Copiado!",
-        "link.more_emojis": "Más emojis en:",
+        "link.more_emojis": "Más emojis en",
         "ariaHome": "Ir a Home",
         "ariaEmojis": "Ir a Emojis",
         "ariaMusic": "Ir a Música",

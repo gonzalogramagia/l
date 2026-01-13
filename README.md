@@ -41,7 +41,9 @@
 - **Paste**: Ready to use anywhere!
 
 ### 🔗 Quick Links
-- **Local Notes**: Click the sticky note icon in the bottom-left to open your local notes app.
+- **Home**: Navigate back to the main portal.
+- **Music**: Switch to the Music app.
+- **Tasks**: Go to your Tasks app.
 
 ---
 
