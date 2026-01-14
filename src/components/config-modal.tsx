@@ -1,7 +1,9 @@
 
 import { useState, useEffect } from "react";
-import { X, Trash2, Plus, Pencil, Check } from "lucide-react";
+import { X, Trash2, Plus, Pencil, Check, Wrench } from "lucide-react";
 import { useCustomSymbols } from "../contexts/custom-symbols-context";
+import { LanguageSwitch } from "./symbol-browser";
+import { useLanguage } from "../contexts/language-context";
 
 interface ConfigModalProps {
     lang: string;
@@ -12,6 +14,7 @@ interface ConfigModalProps {
 
 export default function ConfigModal({ onClose }: ConfigModalProps) {
     const { customSymbols, addCustomSymbol, editCustomSymbol, removeCustomSymbol } = useCustomSymbols();
+    const { t } = useLanguage();
     const [editingSymbol, setEditingSymbol] = useState<string | null>(null); // Symbol being edited
     const [deleteConfirmation, setDeleteConfirmation] = useState<string | null>(null); // Symbol pending delete
 
@@ -104,9 +107,12 @@ export default function ConfigModal({ onClose }: ConfigModalProps) {
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex items-center justify-between p-4 border-b border-zinc-100 dark:border-zinc-800">
-                    <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
-                        Configuración
-                    </h2>
+                    <div className="flex items-center gap-2">
+                        <Wrench className="w-5 h-5 text-zinc-900 dark:text-white scale-x-[-1]" />
+                        <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">
+                            {t('config.title')}
+                        </h2>
+                    </div>
                     <button
                         onClick={onClose}
                         className="p-2 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors cursor-pointer"
@@ -116,41 +122,51 @@ export default function ConfigModal({ onClose }: ConfigModalProps) {
                 </div>
 
                 <div className="p-6 overflow-y-auto">
+                    <div className="md:hidden mb-6 pb-6 border-b border-zinc-100 dark:border-zinc-800">
+                        <h3 className="text-sm font-medium text-zinc-900 dark:text-white mb-3">
+                            {t('config.switch_language')}
+                        </h3>
+                        <LanguageSwitch />
+                    </div>
+
                     <h3 className="text-sm font-medium text-zinc-900 dark:text-white mb-4">
-                        {editingSymbol ? "Editar Emoji Personalizado" : "Agregar Emoji Personalizado"}
+                        {editingSymbol ? t('config.edit_emoji.title') : t('config.add_emoji.title')}
                     </h3>
 
                     <form onSubmit={handleSubmit} className="mb-8">
                         <div className="flex flex-col lg:flex-row gap-4 items-end">
-                            <div className="flex-1 w-full lg:w-auto">
-                                <label htmlFor="symbol" className="block text-xs font-medium text-zinc-500 mb-1">
-                                    Emoji
-                                </label>
-                                <input
-                                    id="symbol"
-                                    type="text"
-                                    value={symbol}
-                                    onChange={(e) => setSymbol(e.target.value)}
-                                    className="w-full p-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                                    placeholder="🚀"
-                                />
-                            </div>
-                            <div className="flex-[2] w-full lg:w-auto">
-                                <label htmlFor="description" className="block text-xs font-medium text-zinc-500 mb-1">
-                                    Nombre
-                                </label>
-                                <input
-                                    id="description"
-                                    type="text"
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                    className="w-full p-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                                    placeholder="Cohete"
-                                />
+                            <div className="flex flex-row gap-4 w-full lg:contents">
+                                <div className="flex-1">
+                                    <label htmlFor="symbol" className="block text-xs font-medium text-zinc-500 mb-1">
+                                        {t('config.form.emoji')}
+                                    </label>
+                                    <input
+                                        id="symbol"
+                                        type="text"
+                                        value={symbol}
+                                        maxLength={5}
+                                        onChange={(e) => setSymbol(e.target.value)}
+                                        className="w-full p-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                                        placeholder={t('config.form.emoji.placeholder')}
+                                    />
+                                </div>
+                                <div className="flex-[2]">
+                                    <label htmlFor="description" className="block text-xs font-medium text-zinc-500 mb-1">
+                                        {t('config.form.name')}
+                                    </label>
+                                    <input
+                                        id="description"
+                                        type="text"
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        className="w-full p-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                                        placeholder={t('config.form.name.placeholder')}
+                                    />
+                                </div>
                             </div>
                             <div className="flex-[2] w-full lg:w-auto">
                                 <label htmlFor="tags" className="block text-xs font-medium text-zinc-500 mb-1">
-                                    Tags (separados por coma)
+                                    {t('config.form.tags')}
                                 </label>
                                 <input
                                     id="tags"
@@ -158,7 +174,7 @@ export default function ConfigModal({ onClose }: ConfigModalProps) {
                                     value={tags}
                                     onChange={(e) => setTags(e.target.value)}
                                     className="w-full p-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
-                                    placeholder="espacio, vehiculo"
+                                    placeholder={t('config.form.tags.placeholder')}
                                 />
                             </div>
                             <button
@@ -167,7 +183,7 @@ export default function ConfigModal({ onClose }: ConfigModalProps) {
                                 className="w-full lg:w-auto h-[42px] px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap cursor-pointer"
                             >
                                 {editingSymbol ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                                <span className="lg:hidden">{editingSymbol ? "Guardar" : "Agregar"}</span>
+                                <span className="lg:hidden">{editingSymbol ? t('config.form.save') : t('config.form.add')}</span>
                             </button>
                             {editingSymbol && (
                                 <button
@@ -176,7 +192,7 @@ export default function ConfigModal({ onClose }: ConfigModalProps) {
                                     className="w-full lg:w-auto h-[42px] px-4 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
                                 >
                                     <X className="w-4 h-4" />
-                                    <span className="lg:hidden">Cancelar</span>
+                                    <span className="lg:hidden">{t('config.form.cancel')}</span>
                                 </button>
                             )}
                         </div>
@@ -185,19 +201,19 @@ export default function ConfigModal({ onClose }: ConfigModalProps) {
                     {customSymbols.length > 0 && (
                         <>
                             <h3 className="text-sm font-medium text-zinc-900 dark:text-white mb-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
-                                Mis Emojis ({customSymbols.length})
+                                {t('config.my_emojis')} ({customSymbols.length})
                             </h3>
                             <div className="space-y-2">
                                 {customSymbols.map((item, index) => (
-                                    <div key={`${item.symbol}-${index}`} className="flex items-center justify-between p-2 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 group">
+                                    <div key={`${item.symbol}-${index}`} className="flex items-center justify-between p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 group">
                                         <div className="flex items-center gap-4 flex-1 min-w-0">
-                                            <span className="text-xl shrink-0 w-8 text-center">{item.symbol}</span>
-                                            <div className="flex items-center gap-3 overflow-hidden flex-wrap">
-                                                <span className="text-sm font-medium text-zinc-900 dark:text-white whitespace-nowrap">
+                                            <span className="text-2xl shrink-0 w-16 text-center">{item.symbol}</span>
+                                            <div className="flex flex-col gap-0.5 overflow-hidden">
+                                                <span className="text-base font-medium text-zinc-900 dark:text-white truncate w-full">
                                                     {item.description.es.main}
                                                 </span>
                                                 {item.tags?.es && item.tags.es.length > 0 && (
-                                                    <div className="flex items-center gap-2 overflow-hidden">
+                                                    <div className="flex items-center gap-2 overflow-hidden flex-wrap">
                                                         {item.tags.es.map((tag: string, i: number) => (
                                                             <span key={i} className="text-xs text-zinc-500 whitespace-nowrap">
                                                                 #{tag}
@@ -211,7 +227,7 @@ export default function ConfigModal({ onClose }: ConfigModalProps) {
                                             <button
                                                 onClick={() => handleEdit(item)}
                                                 className="p-1.5 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
-                                                title="Editar"
+                                                title={t('config.edit')}
                                             >
                                                 <Pencil className="w-4 h-4" />
                                             </button>
@@ -221,7 +237,7 @@ export default function ConfigModal({ onClose }: ConfigModalProps) {
                                                     ? "text-red-600 bg-red-100 dark:bg-red-900/30 opacity-100"
                                                     : "text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
                                                     }`}
-                                                title="Eliminar"
+                                                title={t('config.delete')}
                                             >
                                                 {deleteConfirmation === item.symbol ? (
                                                     <Check className="w-4 h-4" />

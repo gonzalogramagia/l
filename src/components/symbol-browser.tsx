@@ -6,7 +6,7 @@ import { useLanguage } from "../contexts/language-context";
 import { Check, SearchX, X, Hash } from "lucide-react";
 import { useCustomSymbols } from "../contexts/custom-symbols-context";
 
-function LanguageSwitch() {
+export function LanguageSwitch() {
     const { language, setLanguage } = useLanguage();
 
     return (
@@ -184,7 +184,9 @@ export function SymbolBrowser() {
                             className="w-full px-4 py-2 rounded-lg border border-neutral-300 bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-neutral-900"
                         />
                     </div>
-                    <LanguageSwitch />
+                    <div className="hidden md:block">
+                        <LanguageSwitch />
+                    </div>
                 </div>
 
                 {activeTag && (
@@ -233,9 +235,9 @@ export function SymbolBrowser() {
                             <button
                                 key={tag}
                                 onClick={() => handleTagClick(tag)}
-                                className="inline-flex items-center gap-1 px-2 py-1 bg-neutral-50 hover:bg-neutral-100 text-neutral-500 hover:text-neutral-700 rounded text-xs transition-colors cursor-pointer opacity-80 hover:opacity-100"
+                                className="inline-flex items-center gap-1 px-2 py-1 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 rounded text-xs transition-colors cursor-pointer"
                             >
-                                <Hash className="w-3 h-3 opacity-50" />
+                                <Hash className="w-3 h-3" />
                                 {tag}
                             </button>
                         ))}
