@@ -75,10 +75,14 @@ export function SymbolBrowser() {
         return Array.from(tags).sort();
     }, [language]);
 
+    const normalizeText = (text: string) => {
+        return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    };
+
     const matchingTags = useMemo(() => {
         if (!search.trim() || activeTag) return [];
-        const lowerSearch = search.toLowerCase();
-        return allTags.filter(tag => tag.toLowerCase().includes(lowerSearch));
+        const normalizedSearch = normalizeText(search);
+        return allTags.filter(tag => normalizeText(tag).includes(normalizedSearch));
     }, [search, allTags, activeTag]);
 
     const filteredSymbols = useMemo(() => {
@@ -101,7 +105,7 @@ export function SymbolBrowser() {
         if (!search.trim()) return currentSymbols;
         if (!search.trim() && !activeTag) return allSymbols;
 
-        const searchLower = search.toLowerCase();
+        const normalizedSearch = normalizeText(search);
 
         return allSymbols.filter((item) => {
             // Filter by Active Tag
@@ -118,15 +122,15 @@ export function SymbolBrowser() {
             // Search by Description
             const description = item.description[language];
             if (
-                description.main.toLowerCase().includes(searchLower) ||
-                description.secondary?.some((s) => s.toLowerCase().includes(searchLower))
+                normalizeText(description.main).includes(normalizedSearch) ||
+                description.secondary?.some((s) => normalizeText(s).includes(normalizedSearch))
             ) {
                 return true;
             }
 
             // Search by Tags
             const tags = item.tags?.[language] || [];
-            if (tags.some((tag) => tag.toLowerCase().includes(searchLower))) return true;
+            if (tags.some((tag) => normalizeText(tag).includes(normalizedSearch))) return true;
 
             return false;
         });
