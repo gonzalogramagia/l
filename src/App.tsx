@@ -1,10 +1,21 @@
 import Home from './pages/Home'
 import Footer from './components/footer'
 import { FloatingLinks } from './components/floating-links'
-import { LanguageProvider } from './contexts/language-context'
-import { Github } from 'lucide-react'
+import { LanguageProvider, useLanguage } from './contexts/language-context'
+import { useState } from 'react'
+import { Github, Wrench } from 'lucide-react'
+import ConfigModal from './components/config-modal'
+import { CustomSymbolsProvider } from './contexts/custom-symbols-context'
 
 function AppContent() {
+    const { language } = useLanguage()
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
+    // Lógica para rutas de importación/exportación según idioma
+    const isEnglish = language === 'en'
+    const exportPath = isEnglish ? '/export' : '/exportar'
+    const importPath = isEnglish ? '/import' : '/importar'
+
     return (
         <div className="max-w-4xl mx-4 mt-8 lg:mx-auto">
             <main className="flex-auto min-w-0 mt-6 flex flex-col px-8 lg:px-0">
@@ -13,15 +24,38 @@ function AppContent() {
                 <FloatingLinks />
             </main>
 
-            <a
-                href="https://github.com/gonzalogramagia/emojis"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="fixed bottom-8 right-8 p-3 bg-white border border-gray-200 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 group z-50 flex items-center justify-center"
-                aria-label="GitHub Repository"
-            >
-                <Github className="w-6 h-6 text-gray-900 group-hover:text-blue-500 transition-colors" />
-            </a>
+            {/* Botón Flotante: Alterna entre Configuración (Wrench) y GitHub */}
+            <div className="fixed bottom-8 right-8 flex gap-3 z-[110]">
+                {isSettingsOpen ? (
+                    <a
+                        href="https://github.com/gonzalogramagia/emojis"
+                        className="p-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 group flex items-center justify-center"
+                        aria-label="GitHub Repository"
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        <Github className="w-6 h-6 text-gray-900 dark:text-white group-hover:text-blue-500 transition-colors" />
+                    </a>
+                ) : (
+                    <button
+                        onClick={() => setIsSettingsOpen(true)}
+                        className="p-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 group cursor-pointer flex items-center justify-center"
+                        aria-label="Configuration"
+                    >
+                        <Wrench className="w-6 h-6 text-gray-900 dark:text-white group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors scale-x-[-1]" />
+                    </button>
+                )}
+            </div>
+
+            {/* Modal de Configuración */}
+            {isSettingsOpen && (
+                <ConfigModal
+                    lang={language}
+                    onClose={() => setIsSettingsOpen(false)}
+                    exportPath={exportPath}
+                    importPath={importPath}
+                />
+            )}
         </div>
     );
 }
@@ -29,7 +63,9 @@ function AppContent() {
 function App() {
     return (
         <LanguageProvider>
-            <AppContent />
+            <CustomSymbolsProvider>
+                <AppContent />
+            </CustomSymbolsProvider>
         </LanguageProvider>
     )
 }

@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { symbols } from "../data/symbols";
 import { useLanguage } from "../contexts/language-context";
 import { Check, SearchX, X, Hash } from "lucide-react";
+import { useCustomSymbols } from "../contexts/custom-symbols-context";
 
 function LanguageSwitch() {
     const { language, setLanguage } = useLanguage();
@@ -33,11 +34,18 @@ function LanguageSwitch() {
 }
 
 export function SymbolBrowser() {
+    const { t } = useLanguage();
+    const { customSymbols } = useCustomSymbols();
+
+    // Combined symbols
+    const allSymbols = useMemo(() => [...customSymbols, ...symbols], [customSymbols]);
+
+    // State for Search
     const [search, setSearch] = useState("");
     const [activeTag, setActiveTag] = useState<string | null>(null);
     const [expandedTags, setExpandedTags] = useState(false);
     const [copiedSymbol, setCopiedSymbol] = useState<string | null>(null);
-    const { language, t } = useLanguage();
+    const { language } = useLanguage();
 
     const handleCopy = async (text: string) => {
         try {
@@ -91,28 +99,38 @@ export function SymbolBrowser() {
         }
 
         if (!search.trim()) return currentSymbols;
-        const lowerSearch = search.toLowerCase();
+        if (!search.trim() && !activeTag) return allSymbols;
 
-        const categories = ["Emojis", "Expresiones", "Letras", "Simbolos"];
-        const matchingCategory = categories.find(
-            cat => t(`category.${cat}`).toLowerCase().includes(lowerSearch) || cat.toLowerCase().includes(lowerSearch)
-        );
+        const searchLower = search.toLowerCase();
 
-        if (matchingCategory) {
-            return currentSymbols.filter(item => item.category === matchingCategory);
-        }
+        return allSymbols.filter((item) => {
+            // Filter by Active Tag
+            if (activeTag) {
+                const itemTags = item.tags?.[language] || [];
+                if (!itemTags.includes(activeTag)) return false;
+            }
 
-        return currentSymbols.filter(
-            (item) =>
-                item.symbol.toLowerCase().includes(lowerSearch) ||
-                item.description[language].main.toLowerCase().includes(lowerSearch) ||
-                item.description[language].secondary?.some(s => s.toLowerCase().includes(lowerSearch)) ||
-                item.description[language === "es" ? "en" : "es"].main.toLowerCase().includes(lowerSearch) ||
-                item.description[language === "es" ? "en" : "es"].secondary?.some(s => s.toLowerCase().includes(lowerSearch)) ||
-                item.tags?.[language]?.some((tag) => tag.toLowerCase().includes(lowerSearch)) ||
-                item.tags?.[language === "es" ? "en" : "es"]?.some((tag) => tag.toLowerCase().includes(lowerSearch))
-        );
-    }, [search, language, t, activeTag]);
+            if (!search.trim()) return true;
+
+            // Search by Symbol
+            if (item.symbol.includes(search)) return true;
+
+            // Search by Description
+            const description = item.description[language];
+            if (
+                description.main.toLowerCase().includes(searchLower) ||
+                description.secondary?.some((s) => s.toLowerCase().includes(searchLower))
+            ) {
+                return true;
+            }
+
+            // Search by Tags
+            const tags = item.tags?.[language] || [];
+            if (tags.some((tag) => tag.toLowerCase().includes(searchLower))) return true;
+
+            return false;
+        });
+    }, [search, language, activeTag, t, allSymbols]);
 
     const contextualTags = useMemo(() => {
         if (!search.trim() && !activeTag) return ["Expresiones", "Simbolos"]; // Default tags
