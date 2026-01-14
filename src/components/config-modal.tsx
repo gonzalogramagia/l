@@ -1,9 +1,10 @@
 
 import { useState, useEffect } from "react";
-import { X, Trash2, Plus, Pencil, Check, Wrench } from "lucide-react";
+import { X, Trash2, Plus, Pencil, Check, Wrench, FileDown, FileUp } from "lucide-react";
 import { useCustomSymbols } from "../contexts/custom-symbols-context";
 import { LanguageSwitch } from "./symbol-browser";
 import { useLanguage } from "../contexts/language-context";
+import { Link } from "react-router-dom";
 
 interface ConfigModalProps {
     lang: string;
@@ -12,7 +13,7 @@ interface ConfigModalProps {
     importPath?: string;
 }
 
-export default function ConfigModal({ onClose }: ConfigModalProps) {
+export default function ConfigModal({ onClose, exportPath, importPath }: ConfigModalProps) {
     const { customSymbols, addCustomSymbol, editCustomSymbol, removeCustomSymbol } = useCustomSymbols();
     const { t } = useLanguage();
     const [editingSymbol, setEditingSymbol] = useState<string | null>(null); // Symbol being edited
@@ -150,7 +151,7 @@ export default function ConfigModal({ onClose }: ConfigModalProps) {
                                         placeholder={t('config.form.emoji.placeholder')}
                                     />
                                 </div>
-                                <div className="flex-[2]">
+                                <div className="flex-[2] lg:flex-[2]">
                                     <label htmlFor="description" className="block text-xs font-medium text-zinc-500 mb-1">
                                         {t('config.form.name')}
                                     </label>
@@ -164,7 +165,7 @@ export default function ConfigModal({ onClose }: ConfigModalProps) {
                                     />
                                 </div>
                             </div>
-                            <div className="flex-[2] w-full lg:w-auto">
+                            <div className="flex-[2] w-full lg:flex-[2.5] lg:w-auto">
                                 <label htmlFor="tags" className="block text-xs font-medium text-zinc-500 mb-1">
                                     {t('config.form.tags')}
                                 </label>
@@ -203,9 +204,9 @@ export default function ConfigModal({ onClose }: ConfigModalProps) {
                             <h3 className="text-sm font-medium text-zinc-900 dark:text-white mb-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
                                 {t('config.my_emojis')} ({customSymbols.length})
                             </h3>
-                            <div className="space-y-2">
+                            <div className="space-y-2 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-3">
                                 {customSymbols.map((item, index) => (
-                                    <div key={`${item.symbol}-${index}`} className="flex items-center justify-between p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 group">
+                                    <div key={`${item.symbol}-${index}`} className="flex items-center justify-between p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 group h-full">
                                         <div className="flex items-center gap-4 flex-1 min-w-0">
                                             <span className="text-2xl shrink-0 w-16 text-center">{item.symbol}</span>
                                             <div className="flex flex-col gap-0.5 overflow-hidden">
@@ -251,6 +252,28 @@ export default function ConfigModal({ onClose }: ConfigModalProps) {
                             </div>
                         </>
                     )}
+
+                    {/* Export / Import Buttons */}
+                    <div className="hidden lg:grid grid-cols-2 gap-3 pt-6 mt-6 border-t border-zinc-100 dark:border-zinc-800">
+                        <Link
+                            to={importPath || "/import"}
+                            className="flex flex-col items-center justify-center gap-2 p-4 bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all group cursor-pointer"
+                        >
+                            <FileDown size={24} className="text-zinc-500 group-hover:text-blue-500 transition-colors" />
+                            <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-200">
+                                {t('config.import_backup')}
+                            </span>
+                        </Link>
+                        <Link
+                            to={exportPath || "/export"}
+                            className="flex flex-col items-center justify-center gap-2 p-4 bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all group cursor-pointer"
+                        >
+                            <FileUp size={24} className="text-zinc-500 group-hover:text-blue-500 transition-colors" />
+                            <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-200">
+                                {t('config.export_backup')}
+                            </span>
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>

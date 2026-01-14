@@ -6,6 +6,9 @@ import { useState } from 'react'
 import { Github, Wrench } from 'lucide-react'
 import ConfigModal from './components/config-modal'
 import { CustomSymbolsProvider } from './contexts/custom-symbols-context'
+import { Routes, Route } from 'react-router-dom'
+import ExportModal from './components/export-modal'
+import ImportModal from './components/import-modal'
 
 function AppContent() {
     const { language } = useLanguage()
@@ -13,8 +16,8 @@ function AppContent() {
 
     // Lógica para rutas de importación/exportación según idioma
     const isEnglish = language === 'en'
-    const exportPath = isEnglish ? '/export' : '/exportar'
-    const importPath = isEnglish ? '/import' : '/importar'
+    const exportPath = isEnglish ? '/en/export' : '/exportar'
+    const importPath = isEnglish ? '/en/import' : '/importar'
 
     return (
         <div className="max-w-4xl mx-4 mt-8 lg:mx-auto">
@@ -56,6 +59,16 @@ function AppContent() {
                     importPath={importPath}
                 />
             )}
+
+            {/* Import/Export Modals */}
+            <Routes>
+                <Route path="/export" element={<ExportModal />} />
+                <Route path="/en/export" element={<ExportModal />} />
+                <Route path="/exportar" element={<ExportModal />} />
+                <Route path="/import" element={<ImportModal />} />
+                <Route path="/en/import" element={<ImportModal />} />
+                <Route path="/importar" element={<ImportModal />} />
+            </Routes>
         </div>
     );
 }

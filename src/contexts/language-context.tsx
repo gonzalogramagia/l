@@ -34,13 +34,15 @@ const translations = {
         "config.form.name": "Nombre",
         "config.form.name.placeholder": "Cohete",
         "config.form.tags": "Tags (separados por coma)",
-        "config.form.tags.placeholder": "espacio, vehiculo",
+        "config.form.tags.placeholder": "Espacio, Vehículo",
         "config.form.add": "Agregar",
         "config.form.save": "Guardar",
         "config.form.cancel": "Cancelar",
         "config.my_emojis": "Mis Emojis",
         "config.edit": "Editar",
         "config.delete": "Eliminar",
+        "config.import_backup": "Importar Backup",
+        "config.export_backup": "Exportar Backup",
     },
     en: {
         "search.placeholder": "Search emoji by name or categories...",
@@ -64,13 +66,15 @@ const translations = {
         "config.form.name": "Name",
         "config.form.name.placeholder": "Rocket",
         "config.form.tags": "Tags (comma separated)",
-        "config.form.tags.placeholder": "space, vehicle",
+        "config.form.tags.placeholder": "Space, Vehicle",
         "config.form.add": "Add",
         "config.form.save": "Save",
         "config.form.cancel": "Cancel",
         "config.my_emojis": "My Emojis",
         "config.edit": "Edit",
         "config.delete": "Delete",
+        "config.import_backup": "Import Backup",
+        "config.export_backup": "Export Backup",
     },
 };
 
@@ -92,6 +96,23 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
             navigate("/", { replace: true });
         }
     }, [location.pathname, navigate]);
+
+    // Handle initial redirect based on stored preference
+    useEffect(() => {
+        const storedLang = localStorage.getItem("language") as Language;
+        if (!storedLang) return;
+
+        // Verify if we are at root paths
+        const isRoot = location.pathname === "/" || location.pathname === "/en";
+
+        if (isRoot) {
+            if (storedLang === "en" && location.pathname === "/") {
+                navigate("/en", { replace: true });
+            } else if (storedLang === "es" && location.pathname === "/en") {
+                navigate("/", { replace: true });
+            }
+        }
+    }, []); // Run only on mount to avoid conflicting with active navigation
 
     useEffect(() => {
         localStorage.setItem("language", language);
