@@ -8,6 +8,7 @@
 
 ## ✨ Key Features
 
+- **✨ Custom Emojis**: Add, edit, and manage your own custom emojis and tags locally.
 - **🌐 Internationalization**: Seamless toggle between Spanish 🇪🇸 and English 🇺🇸.
 - **🔎 Smart Search**: Find emojis by:
     - Name (e.g., "Rocket")
