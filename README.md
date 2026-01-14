@@ -16,7 +16,7 @@
 - **📋 Instant Copy**: One-click copy with immediate visual feedback.
 - **🎨 Clean UI**: Minimalist design with a focus on usability.
 - **📂 Organized Library**: Structured categories for Emojis, Expressions, Letters, and Symbols.
-- **⬇️ Smart Navigation**: Stationary "Local Notes" button for quick access to your notes.
+- **⬇️ Smart Navigation**: Stationary buttons for quick access to Home, Music, and Training apps.
 
 ---
 
@@ -43,7 +43,7 @@
 ### 🔗 Quick Links
 - **Home**: Navigate back to the main portal.
 - **Music**: Switch to the Music app.
-- **Tasks**: Go to your Tasks app.
+- **Training**: Go to your Training app.
 
 ---
 
