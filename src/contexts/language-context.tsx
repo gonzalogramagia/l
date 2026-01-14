@@ -24,7 +24,7 @@ const translations = {
         "ariaHome": "Ir a Home",
         "ariaEmojis": "Ir a Emojis",
         "ariaMusic": "Ir a Música",
-        "ariaTasks": "Ir a Tareas",
+        "ariaTraining": "Ir a Entrenar",
     },
     en: {
         "search.placeholder": "Search emoji by name or categories...",
@@ -38,7 +38,7 @@ const translations = {
         "ariaHome": "Go to Home",
         "ariaEmojis": "Go to Emojis",
         "ariaMusic": "Go to Music",
-        "ariaTasks": "Go to Tasks",
+        "ariaTraining": "Go to Training",
     },
 };
 
