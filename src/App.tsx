@@ -13,6 +13,17 @@ import ImportModal from './components/import-modal'
 function AppContent() {
     const { language } = useLanguage()
     const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+    const [editingEmoji, setEditingEmoji] = useState(null)
+
+    const handleEditEmoji = (emoji: any) => {
+        setEditingEmoji(emoji)
+        setIsSettingsOpen(true)
+    }
+
+    const handleCloseSettings = () => {
+        setIsSettingsOpen(false)
+        setEditingEmoji(null)
+    }
 
     // Lógica para rutas de importación/exportación según idioma
     const isEnglish = language === 'en'
@@ -22,7 +33,7 @@ function AppContent() {
     return (
         <div className="max-w-4xl mx-4 mt-8 lg:mx-auto">
             <main className="flex-auto min-w-0 mt-6 flex flex-col px-8 lg:px-0">
-                <Home />
+                <Home onEdit={handleEditEmoji} />
                 <Footer />
                 <FloatingLinks />
             </main>
@@ -54,9 +65,10 @@ function AppContent() {
             {isSettingsOpen && (
                 <ConfigModal
                     lang={language}
-                    onClose={() => setIsSettingsOpen(false)}
+                    onClose={handleCloseSettings}
                     exportPath={exportPath}
                     importPath={importPath}
+                    initialData={editingEmoji}
                 />
             )}
 

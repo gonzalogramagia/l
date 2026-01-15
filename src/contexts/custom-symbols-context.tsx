@@ -1,11 +1,11 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { SymbolItem } from "../data/symbols";
+import { SymbolItem, symbols } from "../data/symbols";
 
 interface CustomSymbolsContextType {
     customSymbols: SymbolItem[];
     addCustomSymbol: (symbol: CustomSymbolInput) => void;
-    editCustomSymbol: (oldSymbol: string, symbol: CustomSymbolInput) => void;
+    editCustomSymbol: (id: string, symbol: CustomSymbolInput) => void;
     removeCustomSymbol: (symbol: string) => void;
 }
 
@@ -18,10 +18,35 @@ export interface CustomSymbolInput {
 const CustomSymbolsContext = createContext<CustomSymbolsContextType | undefined>(undefined);
 
 export function CustomSymbolsProvider({ children }: { children: ReactNode }) {
+    const generateId = () => {
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+            return crypto.randomUUID();
+        }
+        return Date.now().toString(36) + Math.random().toString(36).substring(2);
+    };
+
     const [customSymbols, setCustomSymbols] = useState<SymbolItem[]>(() => {
         const stored = localStorage.getItem("custom_emojis");
         return stored ? JSON.parse(stored) : [];
     });
+
+    // Migrate legacy symbols (add IDs if missing)
+    useEffect(() => {
+        setCustomSymbols(prev => {
+            let changed = false;
+            const migrated = prev.map(s => {
+                if (!s.id) {
+                    changed = true;
+                    // Try to find matching static symbol to inherit ID
+                    const staticMatch = symbols.find(staticS => staticS.symbol === s.symbol);
+                    const newId = staticMatch?.id || generateId();
+                    return { ...s, id: newId };
+                }
+                return s;
+            });
+            return changed ? migrated : prev;
+        });
+    }, []);
 
     useEffect(() => {
         localStorage.setItem("custom_emojis", JSON.stringify(customSymbols));
@@ -29,38 +54,44 @@ export function CustomSymbolsProvider({ children }: { children: ReactNode }) {
 
     const addCustomSymbol = (input: CustomSymbolInput) => {
         const newSymbol: SymbolItem = {
+            id: generateId(),
             symbol: input.symbol,
             description: {
                 es: { main: input.description },
                 en: { main: input.description },
             },
-            category: "Emojis", // Default category or could be "Custom" if supported
             tags: {
                 es: input.tags ? input.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
                 en: input.tags ? input.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
             },
         };
-        setCustomSymbols(prev => [...prev, newSymbol]);
+
+        setCustomSymbols(prev => {
+            const filtered = prev.filter(s => s.symbol !== newSymbol.symbol);
+            return [...filtered, newSymbol];
+        });
     };
 
-    const editCustomSymbol = (oldSymbol: string, input: CustomSymbolInput) => {
-        setCustomSymbols(prev => prev.map(item => {
-            if (item.symbol === oldSymbol) {
-                return {
-                    ...item,
-                    symbol: input.symbol,
-                    description: {
-                        es: { main: input.description },
-                        en: { main: input.description },
-                    },
-                    tags: {
-                        es: input.tags ? input.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
-                        en: input.tags ? input.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
-                    }
-                };
-            }
-            return item;
-        }));
+    const editCustomSymbol = (id: string, input: CustomSymbolInput) => {
+        setCustomSymbols(prev => {
+            const targetSymbol = input.symbol;
+            const filtered = prev.filter(s => s.id !== id && s.symbol !== targetSymbol);
+
+            const updatedSymbol: SymbolItem = {
+                id: id,
+                symbol: input.symbol,
+                description: {
+                    es: { main: input.description },
+                    en: { main: input.description },
+                },
+                tags: {
+                    es: input.tags ? input.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
+                    en: input.tags ? input.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
+                }
+            };
+
+            return [...filtered, updatedSymbol];
+        });
     };
 
     const removeCustomSymbol = (symbol: string) => {

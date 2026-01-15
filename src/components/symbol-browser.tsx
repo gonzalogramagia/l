@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { symbols } from "../data/symbols";
 import { useLanguage } from "../contexts/language-context";
-import { Check, SearchX, X, Hash } from "lucide-react";
+import { Check, SearchX, X, Hash, Pencil } from "lucide-react";
 import { useCustomSymbols } from "../contexts/custom-symbols-context";
 
 export function LanguageSwitch() {
@@ -33,12 +33,32 @@ export function LanguageSwitch() {
     );
 }
 
-export function SymbolBrowser() {
+interface SymbolBrowserProps {
+    onEdit?: (symbol: any) => void;
+}
+
+export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
     const { t } = useLanguage();
     const { customSymbols } = useCustomSymbols();
 
-    // Combined symbols
-    const allSymbols = useMemo(() => [...customSymbols, ...symbols], [customSymbols]);
+    // Combined symbols with deduplication (Custom overrides Static)
+    const allSymbols = useMemo(() => {
+        const customIds = new Set(customSymbols.map(s => String(s.id)).filter(Boolean));
+        const customSymbolsSet = new Set(customSymbols.map(s => s.symbol));
+        const merged = [...customSymbols];
+
+        symbols.forEach(s => {
+            // Exclude if ID matches (edited static) OR Symbol matches (overwrite by string)
+            const hasIdMatch = s.id && customIds.has(String(s.id));
+            const hasSymbolMatch = customSymbolsSet.has(s.symbol);
+
+            if (!hasIdMatch && !hasSymbolMatch) {
+                merged.push(s);
+            }
+        });
+
+        return merged;
+    }, [customSymbols]);
 
     // State for Search
     const [search, setSearch] = useState("");
@@ -90,7 +110,6 @@ export function SymbolBrowser() {
 
         if (language === 'en') {
             currentSymbols = currentSymbols.filter(item =>
-                item.category !== "Letras" &&
                 item.symbol !== "¡" &&
                 item.symbol !== "¿"
             );
@@ -267,15 +286,27 @@ export function SymbolBrowser() {
                             <button
                                 key={`${item.symbol}-${index}`}
                                 onClick={() => handleCopy(item.symbol)}
-                                className="flex items-center gap-3 p-2 rounded hover:bg-neutral-50 transition-all text-left group overflow-hidden cursor-pointer"
+                                className="relative flex items-center gap-3 p-2 rounded hover:bg-neutral-50 transition-all text-left group overflow-hidden cursor-pointer"
                             >
-                                <div className="text-2xl min-w-[2.5rem] h-10 flex items-center justify-center bg-neutral-50 rounded group-hover:bg-white transition-colors text-neutral-900">
+                                <div className="text-2xl min-w-[2.5rem] h-10 flex items-center justify-center bg-neutral-50 rounded group-hover:bg-white transition-colors text-neutral-900 relative">
                                     {isCopied ? (
                                         <Check className="w-6 h-6 text-green-500 animate-in zoom-in duration-200" />
                                     ) : (
                                         item.symbol
                                     )}
                                 </div>
+                                {onEdit && (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onEdit(item);
+                                        }}
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 bg-white/80 hover:bg-white rounded-full text-neutral-400 hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm z-10 cursor-pointer"
+                                        title={t("config.edit")}
+                                    >
+                                        <Pencil className="w-3 h-3" />
+                                    </button>
+                                )}
                                 <div className="flex flex-col min-w-0">
                                     <span className={`text-sm font-medium truncate transition-colors ${isCopied ? "text-green-600" : "text-neutral-900"}`}>
                                         {isCopied ? t("copy.feedback") : item.description[language].main}
@@ -297,7 +328,7 @@ export function SymbolBrowser() {
                         );
                     })}
                 </div>
-            </section>
+            </section >
 
             {
                 filteredSymbols.length === 0 && (

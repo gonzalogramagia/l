@@ -34,12 +34,16 @@
 
 ### 🔎 Finding Symbols
 - **Search**: Type what you need (e.g., "Handshake", "Tools") in the search bar.
-- **Browse**: Scroll through categories like Emojis, Expressions, and Symbols.
 - **Toggle Language**: Switch between EN and ES to search in your preferred language.
 
 ### 📋 Using Symbols
 - **Copy**: Click on any emoji card to instantly copy it to your clipboard.
 - **Paste**: Ready to use anywhere!
+- **Edit**: Click the pencil icon (visible on hover) to edit an emoji. You can change its tags or description.
+- **Create**: Click the wrench icon (bottom right) to open the configuration modal, where you can add brand new custom emojis.
+    - *Note*: All your custom creations and edits are **saved locally in your browser (LocalStorage)**. They will persist on this device but won't sync across different browsers or devices.
+- **Backups**: Inside the configuration modal, you can **Export** your data to a JSON file or **Import** a previous backup. Use this to save your data or transfer it to another device.
+
 
 ### 🔗 Quick Links
 - **Home**: Navigate back to the main portal.

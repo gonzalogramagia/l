@@ -11,13 +11,16 @@ interface ConfigModalProps {
     onClose: () => void;
     exportPath?: string;
     importPath?: string;
+    initialData?: any;
 }
 
-export default function ConfigModal({ onClose, exportPath, importPath }: ConfigModalProps) {
+export default function ConfigModal({ onClose, exportPath, importPath, initialData, lang }: ConfigModalProps) {
     const { customSymbols, addCustomSymbol, editCustomSymbol, removeCustomSymbol } = useCustomSymbols();
     const { t } = useLanguage();
-    const [editingSymbol, setEditingSymbol] = useState<string | null>(null); // Symbol being edited
-    const [deleteConfirmation, setDeleteConfirmation] = useState<string | null>(null); // Symbol pending delete
+    console.log("ConfigModal initialData:", initialData);
+    const [editingSymbol, setEditingSymbol] = useState<string | null>(initialData ? initialData.symbol : null);
+    const [editingId, setEditingId] = useState<string | null>(initialData ? initialData.id : null);
+    const [deleteConfirmation, setDeleteConfirmation] = useState<string | null>(null);
 
     // Helper to get draft
     const getDraft = () => {
@@ -31,9 +34,23 @@ export default function ConfigModal({ onClose, exportPath, importPath }: ConfigM
         }
     };
 
-    const [symbol, setSymbol] = useState(() => getDraft()?.symbol || "");
-    const [description, setDescription] = useState(() => getDraft()?.description || "");
-    const [tags, setTags] = useState(() => getDraft()?.tags || "");
+    const [symbol, setSymbol] = useState(() => initialData ? initialData.symbol : (getDraft()?.symbol || ""));
+    const [description, setDescription] = useState(() => {
+        if (initialData) {
+            // Use existing translation if available, fallback to 'es' main, then empty
+            return initialData.description[initialData.lang] ? initialData.description[initialData.lang].main :
+                (initialData.description[lang]?.main || initialData.description['es']?.main || "");
+        }
+        return getDraft()?.description || "";
+    });
+
+    const [tags, setTags] = useState(() => {
+        if (initialData) {
+            const t = initialData.tags?.[initialData.lang] || initialData.tags?.[lang] || initialData.tags?.['es'];
+            return t ? t.join(", ") : "";
+        }
+        return getDraft()?.tags || "";
+    });
 
     // Save draft on change (only if not editing)
     useEffect(() => {
@@ -68,22 +85,32 @@ export default function ConfigModal({ onClose, exportPath, importPath }: ConfigM
         e.preventDefault();
         if (!symbol.trim() || !description.trim()) return;
 
-        if (editingSymbol) {
-            editCustomSymbol(editingSymbol, { symbol, description, tags });
-            restoreDraft(); // Restore draft after editing
+        if (editingId) {
+            editCustomSymbol(editingId, { symbol, description, tags });
         } else {
             addCustomSymbol({ symbol, description, tags });
-            // Clear form and draft
+        }
+
+        restoreDraft();
+
+        if (initialData) {
+            onClose();
+        } else {
             setSymbol("");
             setDescription("");
             setTags("");
         }
     };
 
+    // ... (rest of code) ...
+
+
+
     const handleEdit = (item: any) => {
         setSymbol(item.symbol);
         setDescription(item.description.es.main);
         setTags(item.tags?.es.join(", ") || "");
+        setEditingId(item.id); // Track ID
         setEditingSymbol(item.symbol);
     };
 
