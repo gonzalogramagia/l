@@ -32,6 +32,10 @@ function AppContent() {
 
     return (
         <div className="max-w-4xl mx-4 mt-8 lg:mx-auto">
+            <div
+                className="fixed inset-0 z-[-1] bg-cover bg-center bg-fixed bg-no-repeat opacity-5"
+                style={{ backgroundImage: "url('/wallpaper.png')" }}
+            />
             <main className="flex-auto min-w-0 mt-6 flex flex-col px-8 lg:px-0">
                 <Home onEdit={handleEditEmoji} />
                 <Footer />
