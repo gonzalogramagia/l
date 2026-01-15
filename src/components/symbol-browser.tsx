@@ -13,7 +13,7 @@ export function LanguageSwitch() {
         <div className="flex items-center gap-2 bg-neutral-100 p-1 rounded-full w-fit">
             <button
                 onClick={() => setLanguage("es")}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${language === "es"
+                className={`px-3 py-2.5 rounded-full text-xs font-medium transition-all cursor-pointer ${language === "es"
                     ? "bg-white shadow-sm text-[#6866D6]"
                     : "text-neutral-500 hover:text-neutral-700"
                     }`}
@@ -22,7 +22,7 @@ export function LanguageSwitch() {
             </button>
             <button
                 onClick={() => setLanguage("en")}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${language === "en"
+                className={`px-3 py-2.5 rounded-full text-xs font-medium transition-all cursor-pointer ${language === "en"
                     ? "bg-white shadow-sm text-[#6866D6]"
                     : "text-neutral-500 hover:text-neutral-700"
                     }`}
@@ -156,7 +156,7 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
     }, [search, language, activeTag, t, allSymbols]);
 
     const contextualTags = useMemo(() => {
-        if (!search.trim() && !activeTag) return ["Expresiones", "Simbolos"]; // Default tags
+        if (!search.trim() && !activeTag) return language === "en" ? ["Expressions", "Symbols"] : ["Expresiones", "Simbolos"]; // Default tags
 
         const tagCounts = new Map<string, number>();
         filteredSymbols.forEach(item => {
@@ -214,15 +214,15 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
 
                 {activeTag && (
                     <div className="flex items-center cursor-pointer" onClick={handleUnpinTag}>
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#6866D6]/10 text-[#6866D6] rounded-full text-xs font-medium hover:bg-[#6866D6]/20 transition-colors">
-                            <Hash className="w-3.5 h-3.5" />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#6866D6]/10 text-[#6866D6] rounded-full text-xs font-medium hover:bg-[#6866D6]/20 transition-colors">
+                            <Hash className="w-3 h-3.5" />
                             {activeTag}
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handleUnpinTag();
                                 }}
-                                className="ml-1 p-0.5 rounded-full transition-colors cursor-pointer"
+                                className="p-0 rounded-full transition-colors cursor-pointer"
                             >
                                 <X className="w-3.5 h-3.5" />
                             </button>
@@ -347,9 +347,9 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
                                 href="https://piliapp.com/twitter-symbols"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-600 hover:underline text-center block"
+                                className="text-[#6866D6] hover:underline text-center block"
                             >
-                                {t("link.more_emojis")} https://piliapp.com/twitter-symbols
+                                {t("link.more_emojis").replace(':', '')} https://piliapp.com/twitter-symbols
                             </a>
                         </div>
                     </div>
