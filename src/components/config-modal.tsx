@@ -208,7 +208,7 @@ export default function ConfigModal({ onClose, exportPath, importPath, initialDa
                             <button
                                 type="submit"
                                 disabled={!symbol || !description}
-                                className="w-full lg:w-auto h-[42px] px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap cursor-pointer"
+                                className="w-full lg:w-auto h-[42px] px-4 bg-[#6866D6] hover:bg-[#5554b7] text-white rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap cursor-pointer"
                             >
                                 {editingSymbol ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                                 <span className="lg:hidden">{editingSymbol ? t('config.form.save') : t('config.form.add')}</span>
@@ -254,7 +254,7 @@ export default function ConfigModal({ onClose, exportPath, importPath, initialDa
                                         <div className="flex items-center gap-2 pl-2 shrink-0">
                                             <button
                                                 onClick={() => handleEdit(item)}
-                                                className="p-1.5 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
+                                                className="p-1.5 text-[#6866D6] hover:bg-[#6866D6]/10 dark:hover:bg-[#6866D6]/20 rounded opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
                                                 title={t('config.edit')}
                                             >
                                                 <Pencil className="w-4 h-4" />
@@ -286,7 +286,7 @@ export default function ConfigModal({ onClose, exportPath, importPath, initialDa
                             to={importPath || "/import"}
                             className="flex flex-col items-center justify-center gap-2 p-4 bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all group cursor-pointer"
                         >
-                            <FileDown size={24} className="text-zinc-500 group-hover:text-blue-500 transition-colors" />
+                            <FileDown size={24} className="text-zinc-500 group-hover:text-[#6866D6] transition-colors" />
                             <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-200">
                                 {t('config.import_backup')}
                             </span>
@@ -295,7 +295,7 @@ export default function ConfigModal({ onClose, exportPath, importPath, initialDa
                             to={exportPath || "/export"}
                             className="flex flex-col items-center justify-center gap-2 p-4 bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all group cursor-pointer"
                         >
-                            <FileUp size={24} className="text-zinc-500 group-hover:text-blue-500 transition-colors" />
+                            <FileUp size={24} className="text-zinc-500 group-hover:text-[#6866D6] transition-colors" />
                             <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-200">
                                 {t('config.export_backup')}
                             </span>

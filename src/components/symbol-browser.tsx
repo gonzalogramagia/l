@@ -14,7 +14,7 @@ export function LanguageSwitch() {
             <button
                 onClick={() => setLanguage("es")}
                 className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${language === "es"
-                    ? "bg-white shadow-sm text-blue-600"
+                    ? "bg-white shadow-sm text-[#6866D6]"
                     : "text-neutral-500 hover:text-neutral-700"
                     }`}
             >
@@ -23,7 +23,7 @@ export function LanguageSwitch() {
             <button
                 onClick={() => setLanguage("en")}
                 className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${language === "en"
-                    ? "bg-white shadow-sm text-blue-600"
+                    ? "bg-white shadow-sm text-[#6866D6]"
                     : "text-neutral-500 hover:text-neutral-700"
                     }`}
             >
@@ -204,7 +204,7 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
                                     handleUnpinTag();
                                 }
                             }}
-                            className="w-full px-4 py-2 rounded-lg border border-neutral-300 bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-neutral-900"
+                            className="w-full px-4 py-2 rounded-lg border border-neutral-300 bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-[#6866D6] transition-all text-neutral-900"
                         />
                     </div>
                     <div className="hidden md:block">
@@ -214,7 +214,7 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
 
                 {activeTag && (
                     <div className="flex items-center cursor-pointer" onClick={handleUnpinTag}>
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium hover:bg-blue-200 transition-colors">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#6866D6]/10 text-[#6866D6] rounded-full text-xs font-medium hover:bg-[#6866D6]/20 transition-colors">
                             <Hash className="w-3.5 h-3.5" />
                             {activeTag}
                             <button
@@ -301,7 +301,7 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
                                             e.stopPropagation();
                                             onEdit(item);
                                         }}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 bg-white/80 hover:bg-white rounded-full text-neutral-400 hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm z-10 cursor-pointer"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 bg-white/80 hover:bg-white rounded-full text-neutral-400 hover:text-[#6866D6] opacity-0 group-hover:opacity-100 transition-all shadow-sm z-10 cursor-pointer"
                                         title={t("config.edit")}
                                     >
                                         <Pencil className="w-3 h-3" />
