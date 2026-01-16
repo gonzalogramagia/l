@@ -13,7 +13,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 const translations = {
     es: {
-        "search.placeholder": "Buscar emoji por su nombre o sus categorías...",
+        "search.placeholder": "Buscar emoji por su nombre o sus tags...",
         "search.no_results": 'No se encontraron resultados para "{search}"',
         "category.Emojis": "Emojis",
         "category.Expresiones": "Expresiones",
@@ -45,7 +45,7 @@ const translations = {
         "config.export_backup": "Exportar Backup",
     },
     en: {
-        "search.placeholder": "Search emoji by name or categories...",
+        "search.placeholder": "Search emoji by name or tags...",
         "search.no_results": 'No results found for "{search}"',
         "category.Emojis": "Emojis",
         "category.Expresiones": "Expressions",
