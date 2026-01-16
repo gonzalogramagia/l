@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { X, Trash2, Plus, Pencil, Check, Wrench, FileDown, FileUp } from "lucide-react";
 import { useCustomSymbols } from "../contexts/custom-symbols-context";
-import { LanguageSwitch } from "./symbol-browser";
+
 import { useLanguage } from "../contexts/language-context";
 import { Link } from "react-router-dom";
 
@@ -150,12 +150,7 @@ export default function ConfigModal({ onClose, exportPath, importPath, initialDa
                 </div>
 
                 <div className="p-6 overflow-y-auto">
-                    <div className="md:hidden mb-6 pb-6 border-b border-zinc-100 dark:border-zinc-800">
-                        <h3 className="text-sm font-medium text-zinc-900 dark:text-white mb-3">
-                            {t('config.switch_language')}
-                        </h3>
-                        <LanguageSwitch />
-                    </div>
+
 
                     <h3 className="text-sm font-medium text-zinc-900 dark:text-white mb-4">
                         {editingSymbol ? t('config.edit_emoji.title') : t('config.add_emoji.title')}

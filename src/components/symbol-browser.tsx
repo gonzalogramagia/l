@@ -190,39 +190,47 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
 
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-2 md:space-y-8">
             <div className="flex flex-col md:flex-row items-center justify-center pt-0 pb-0 md:pt-0 md:pb-0 gap-0 md:gap-1 max-w-4xl mx-auto">
                 <img
                     src="/milemojis.png"
                     alt="Milemojis"
                     className={`h-60 md:h-72 w-auto object-contain hover:scale-105 transition-transform duration-500 drop-shadow-2xl -mt-6 -mb-4 md:mt-0 md:mb-0 md:-mr-4 ${language === 'en' ? 'md:ml-0' : 'md:ml-16'}`}
                 />
-                <h1 className="mx-auto md:mx-0 md:max-w-xl text-3xl md:text-5xl font-extrabold text-center md:text-left text-neutral-900 leading-tight tracking-tight">
-                    {language === 'en' ? (
-                        <>
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-600">
-                                Get the perfect emoji{" "}
-                            </span>
-                            <span className="text-[#6866D6] block">
-                                in a flash!
-                            </span>
-                        </>
-                    ) : (
-                        <>
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-600">
-                                ¡Consigue el emoji{" "}
-                            </span>
-                            <span className="block md:inline">
+                <div className="flex flex-col items-center md:items-start md:gap-0">
+                    <h1 className="mx-auto md:mx-0 md:max-w-xl text-3xl md:text-5xl font-extrabold text-center md:text-left text-neutral-900 leading-tight tracking-tight">
+                        {language === 'en' ? (
+                            <>
                                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-600">
-                                    perfecto{" "}
+                                    Get the perfect emoji{" "}
                                 </span>
-                                <span className="text-[#6866D6]">
-                                    al instante!
+                                <span className="text-[#6866D6] block">
+                                    in a flash!
                                 </span>
-                            </span>
-                        </>
-                    )}
-                </h1>
+                            </>
+                        ) : (
+                            <>
+                                <span className="bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-600">
+                                    ¡Consigue el emoji{" "}
+                                </span>
+                                <span className="block md:inline">
+                                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-600">
+                                        perfecto{" "}
+                                    </span>
+                                    <span className="text-[#6866D6]">
+                                        al instante!
+                                    </span>
+                                </span>
+                            </>
+                        )}
+                    </h1>
+                    <div className="md:hidden flex items-center gap-2 mt-6 mb-0">
+                        <span className="text-sm text-neutral-600 font-medium">
+                            {language === 'en' ? 'Switch language' : 'Cambiar idioma'}
+                        </span>
+                        <LanguageSwitch />
+                    </div>
+                </div>
             </div>
 
             <div className="sticky top-0 z-10 bg-white py-4 border-b border-neutral-200 space-y-3">
@@ -266,7 +274,7 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
 
                 {/* Tag Suggestions */}
                 {(matchingTags.length > 0 || contextualTags.length > 0) && (
-                    <div className="flex flex-wrap gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="flex flex-wrap gap-2 animate-in fade-in slide-in-from-top-2 duration-200 justify-center md:justify-start">
                         {/* Direct Matches */}
                         {matchingTags.slice(0, expandedTags ? undefined : 7).map(tag => (
                             <button
