@@ -156,7 +156,7 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
     }, [search, language, activeTag, t, allSymbols]);
 
     const contextualTags = useMemo(() => {
-        if (!search.trim() && !activeTag) return language === "en" ? ["Expressions", "Symbols"] : ["Expresiones", "Simbolos"]; // Default tags
+        if (!search.trim() && !activeTag) return language === "en" ? ["Expressions", "Symbols"] : ["Expresiones", "Símbolos"]; // Default tags
 
         const tagCounts = new Map<string, number>();
         filteredSymbols.forEach(item => {

@@ -12,7 +12,7 @@ export function FloatingLinks() {
     // const emojisUrl = getUrl("https://emojis.gonzalogramagia.com") // Unused because button is disabled
     const musicUrl = getUrl("https://music.gonzalogramagia.com")
 
-    const trainingUrl = "https://entrenar.app"
+    const trainingUrl = getUrl("https://entrenar.app")
 
     return (
         <div className="fixed bottom-8 left-8 flex gap-3 z-50">
