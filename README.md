@@ -1,8 +1,8 @@
-# 🚀 Emojis
+# 😎 Mil Emojis
 
 **A fast, accessible, and global collection of emojis and symbols for quick copy and pasting.**
 
-"Emojis" is designed to be your go-to tool for finding the perfect symbol instantly. With smart search and a clean interface, it helps you communicate better without the hassle.
+"Mil Emojis" is designed to be your go-to tool for finding the perfect symbol in a flash. With smart search and a clean interface, it helps you communicate your ideas clearly.
 
 ---
 
