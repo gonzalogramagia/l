@@ -1,6 +1,6 @@
 
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { symbols } from "../data/symbols";
 import { useLanguage } from "../contexts/language-context";
 import { Check, SearchX, X, Hash, Pencil } from "lucide-react";
@@ -66,6 +66,7 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
     const [expandedTags, setExpandedTags] = useState(false);
     const [copiedSymbol, setCopiedSymbol] = useState<string | null>(null);
     const { language } = useLanguage();
+    const prevLanguageRef = useRef(language);
 
     const handleCopy = async (text: string) => {
         try {
@@ -86,6 +87,27 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
     useEffect(() => {
         setExpandedTags(false);
     }, [search]);
+
+    // Translate active tag when language changes
+    useEffect(() => {
+        if (prevLanguageRef.current !== language && activeTag) {
+            const fromLang = prevLanguageRef.current as 'es' | 'en';
+            const toLang = language as 'es' | 'en';
+
+            // Find a symbol that has the active tag in the previous language
+            const matchingSymbol = symbols.find(s =>
+                s.tags && s.tags[fromLang] && s.tags[fromLang].includes(activeTag)
+            );
+
+            if (matchingSymbol && matchingSymbol.tags?.[fromLang] && matchingSymbol.tags?.[toLang]) {
+                const index = matchingSymbol.tags[fromLang].indexOf(activeTag);
+                if (index !== -1 && matchingSymbol.tags[toLang][index]) {
+                    setActiveTag(matchingSymbol.tags[toLang][index]);
+                }
+            }
+        }
+        prevLanguageRef.current = language;
+    }, [language, activeTag]);
 
     const allTags = useMemo(() => {
         const tags = new Set<string>();
@@ -192,11 +214,17 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
     return (
         <div className="space-y-2 md:space-y-8">
             <div className="flex flex-col md:flex-row items-center justify-center pt-0 pb-0 md:pt-0 md:pb-0 gap-0 md:gap-1 max-w-4xl mx-auto">
-                <img
-                    src="/milemojis.png"
-                    alt="Milemojis"
-                    className={`h-60 md:h-72 w-auto object-contain hover:scale-105 transition-transform duration-500 drop-shadow-2xl -mt-6 -mb-4 md:mt-0 md:mb-0 md:-mr-4 ${language === 'en' ? 'md:ml-0' : 'md:ml-16'}`}
-                />
+                <button
+                    onClick={() => handleTagClick(language === 'en' ? 'Party' : 'Fiesta')}
+                    className="cursor-pointer bg-transparent border-none p-0 outline-none focus:outline-none shrink-0"
+                    type="button"
+                >
+                    <img
+                        src="/milemojis.png"
+                        alt="Milemojis"
+                        className={`h-60 md:h-72 w-auto object-contain hover:scale-105 transition-transform duration-500 drop-shadow-2xl -mt-6 -mb-4 md:mt-0 md:mb-0 md:-mr-4`}
+                    />
+                </button>
                 <div className="flex flex-col items-center md:items-start md:gap-0">
                     <h1 className="mx-auto md:mx-0 md:max-w-xl text-3xl md:text-5xl font-extrabold text-center md:text-left text-neutral-900 leading-tight tracking-tight">
                         {language === 'en' ? (

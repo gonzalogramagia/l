@@ -169,7 +169,7 @@ export default function ConfigModal({ onClose, exportPath, importPath, initialDa
                                         value={symbol}
                                         maxLength={5}
                                         onChange={(e) => setSymbol(e.target.value)}
-                                        className="w-full p-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                                        className="w-full p-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#6866D6] dark:text-white"
                                         placeholder={t('config.form.emoji.placeholder')}
                                     />
                                 </div>
@@ -182,7 +182,7 @@ export default function ConfigModal({ onClose, exportPath, importPath, initialDa
                                         type="text"
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
-                                        className="w-full p-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                                        className="w-full p-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#6866D6] dark:text-white"
                                         placeholder={t('config.form.name.placeholder')}
                                     />
                                 </div>
@@ -196,7 +196,7 @@ export default function ConfigModal({ onClose, exportPath, importPath, initialDa
                                     type="text"
                                     value={tags}
                                     onChange={(e) => setTags(e.target.value)}
-                                    className="w-full p-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                                    className="w-full p-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-[#6866D6] dark:text-white"
                                     placeholder={t('config.form.tags.placeholder')}
                                 />
                             </div>
