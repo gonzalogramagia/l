@@ -129,7 +129,7 @@ export default function ExportModal() {
                                 <div
                                     key={tag}
                                     onClick={() => toggleTag(tag)}
-                                    className="flex items-center gap-3 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
+                                    className="flex items-center justify-center gap-3 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
                                 >
                                     <div className={`${selectedTags[tag] ? 'text-[#6866D6] dark:text-[#a09fe6]' : 'text-zinc-300 dark:text-zinc-600'}`}>
                                         {selectedTags[tag] ? <CheckSquare className="w-5 h-5" /> : <Square className="w-5 h-5" />}
