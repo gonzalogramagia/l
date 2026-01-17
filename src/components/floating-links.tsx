@@ -1,4 +1,4 @@
-import { Home, Smile, Music, BicepsFlexed } from 'lucide-react'
+import { Smile, Music, BicepsFlexed, ClipboardClock } from 'lucide-react'
 import { useLanguage } from '../contexts/language-context'
 
 export function FloatingLinks() {
@@ -8,7 +8,7 @@ export function FloatingLinks() {
     // Logic for URLs
     const getUrl = (baseUrl: string) => isEnglish ? `${baseUrl}/en` : baseUrl
 
-    const homeUrl = getUrl("https://home.gonzalogramagia.com")
+    const homeUrl = getUrl("https://today.gonzalogramagia.com")
     // const emojisUrl = getUrl("https://emojis.gonzalogramagia.com") // Unused because button is disabled
     const musicUrl = getUrl("https://music.gonzalogramagia.com")
 
@@ -23,7 +23,7 @@ export function FloatingLinks() {
                 aria-label={t('ariaHome')}
                 title={t('ariaHome')}
             >
-                <Home className="w-6 h-6 text-zinc-900 dark:text-white group-hover:text-yellow-500 transition-colors" />
+                <ClipboardClock className="w-6 h-6 text-zinc-900 dark:text-white group-hover:text-yellow-500 transition-colors" />
             </a>
 
             {/* Emojis Button (Disabled) */}

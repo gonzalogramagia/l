@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { X, Trash2, Plus, Pencil, Check, Wrench, FileDown, FileUp } from "lucide-react";
+import { X, Trash2, Plus, Pencil, Check, Wrench, FileDown, FileUp, Zap } from "lucide-react";
 import { useCustomSymbols } from "../contexts/custom-symbols-context";
 
 import { useLanguage } from "../contexts/language-context";
@@ -298,6 +298,17 @@ export default function ConfigModal({ onClose, exportPath, importPath, initialDa
                     </div>
                 </div>
             </div>
+
+            {/* Floating Zap Button */}
+            <a
+                href={lang === 'en' ? "https://mas.moovimiento.com/en" : "https://mas.moovimiento.com"}
+                target="_blank"
+                rel="noreferrer"
+                className="fixed top-6 right-8 p-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 group cursor-pointer flex items-center justify-center z-[120]"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <Zap className="w-6 h-6 text-zinc-900 dark:text-white group-hover:text-yellow-500 transition-colors" />
+            </a>
         </div>
     );
 }
