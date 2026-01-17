@@ -46,9 +46,9 @@
 
 
 ### 🔗 Quick Links
-- **Home**: Navigate back to the main portal.
+- **Today**: Navigate back to the main portal.
 - **Music**: Switch to the Music app.
-- **Training**: Go to your Training app.
+- **Play**: Take a break and play.
 
 ---
 

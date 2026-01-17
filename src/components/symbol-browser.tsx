@@ -212,7 +212,7 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
 
     return (
         <div className="space-y-0 md:space-y-4">
-            <div className={`flex flex-col md:flex-row items-center justify-center pt-4 md:pt-8 gap-0 md:gap-1 max-w-4xl mx-auto ${language === 'es' ? 'md:translate-x-12' : ''}`}>
+            <div className={`flex flex-col md:flex-row items-center justify-center pt-4 md:pt-8 pb-2 md:pb-14 gap-0 md:gap-1 max-w-4xl mx-auto ${language === 'es' ? 'md:translate-x-12' : ''}`}>
                 <button
                     onClick={() => handleTagClick(language === 'en' ? 'Party' : 'Fiesta')}
                     className="cursor-pointer bg-transparent border-none p-0 outline-none focus:outline-none shrink-0"
@@ -221,10 +221,10 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
                     <img
                         src="/milemojis.png"
                         alt="Milemojis"
-                        className={`h-80 md:h-96 w-auto object-contain hover:scale-105 transition-transform duration-500 drop-shadow-2xl -mt-10 -mb-8 md:-mt-16 md:-mb-12 md:-mr-12`}
+                        className={`h-64 md:h-80 w-auto object-contain hover:scale-105 transition-transform duration-500 drop-shadow-2xl -mt-10 -mb-8 md:-mt-14 md:-mb-12 md:-mr-7`}
                     />
                 </button>
-                <div className="flex flex-col items-center md:items-start md:gap-0 md:-ml-12">
+                <div className="flex flex-col items-center md:items-start md:gap-0 md:-ml-7">
                     <h1 className="mx-auto md:mx-0 md:max-w-xl text-3xl md:text-5xl font-extrabold text-center md:text-left text-neutral-900 leading-tight tracking-tight">
                         {language === 'en' ? (
                             <>

@@ -325,6 +325,8 @@ export const symbols: SymbolItem[] = [
     { id: "306", symbol: "🍿", description: { es: { main: "Cine" }, en: { main: "Cinema" } }, tags: { es: ["Entretenimiento"], en: ["Entertainment"] } },
     { id: "307", symbol: "🏆", description: { es: { main: "Trofeo" }, en: { main: "Trophy" } }, tags: { es: ["Deportes"], en: ["Sports"] } },
 
+
+
     { id: "309", symbol: "🎤", description: { es: { main: "Mic" }, en: { main: "Mic" } }, tags: { es: ["Random", "Música", "Fiesta"], en: ["Random", "Music", "Party"] } },
     { id: "310", symbol: "🍀", description: { es: { main: "Trébol de Cuatro Hojas", secondary: ["Suerte"] }, en: { main: "Four Leaf Clover", secondary: ["Luck"] } }, tags: { es: ["Plantas"], en: ["Plants"] } },
     { id: "311", symbol: "🍃", description: { es: { main: "Hojas" }, en: { main: "Leaves" } }, tags: { es: ["Plantas"], en: ["Plants"] } },
@@ -439,6 +441,9 @@ export const symbols: SymbolItem[] = [
     { id: "420", symbol: "📬", description: { es: { main: "Buzón de Correo", secondary: ["Buzon de Correo"] }, en: { main: "Mailbox" } }, tags: { es: ["Oficina"], en: ["Office"] } },
     { id: "421", symbol: "📩", description: { es: { main: "Correo" }, en: { main: "Email" } }, tags: { es: ["Oficina"], en: ["Office"] } },
     { id: "422", symbol: "🩼", description: { es: { main: "Muleta" }, en: { main: "Crutch" } }, tags: { es: ["Salud"], en: ["Health"] } },
+    { id: "423", symbol: "🎮", description: { es: { main: "Joystick", secondary: ["mando", "play", "juego", "jugar"] }, en: { main: "Joystick", secondary: ["controller", "play", "game"] } }, tags: { es: ["Entretenimiento"], en: ["Entertainment"] } },
+
+
 
     { id: "425", symbol: "🇫🇷", description: { es: { main: "Bandera Francia" }, en: { main: "French Flag" } }, tags: { es: ["Random"], en: ["Random"] } },
     { id: "426", symbol: "🇮🇹", description: { es: { main: "Bandera Italiana" }, en: { main: "Italian Flag" } }, tags: { es: ["Random"], en: ["Random"] } },
@@ -783,7 +788,7 @@ export const symbols: SymbolItem[] = [
     { id: "765", symbol: "🖥", description: { es: { main: "Computadora de Escritorio", secondary: ["Computadora", "PC"] }, en: { main: "Desktop Computer", secondary: ["Computer", "PC"] } }, tags: { es: ["Informatica", "Tecnologia", "Oficina", "Trabajo"], en: ["Computing", "Technology", "Office", "Work"] } },
     { id: "766", symbol: "⌨", description: { es: { main: "Teclado", secondary: ["Computadora", "PC"] }, en: { main: "Keyboard", secondary: ["Computer", "PC"] } }, tags: { es: ["Informatica", "Tecnologia", "Oficina", "Trabajo"], en: ["Computing", "Technology", "Office", "Work"] } },
     { id: "767", symbol: "🔘", description: { es: { main: "Círculo dentro de un círculo", secondary: ["Círculo dentro de un Círculo"] }, en: { main: "Radio Button" } }, tags: { es: ["Organizacion", "Tareas"], en: ["Organization", "Tasks"] } },
-    { id: "768", symbol: "🕹", description: { es: { main: "Joystick", secondary: ["mando", "play", "juego"] }, en: { main: "Joystick", secondary: ["controller", "play", "game"] } }, tags: { es: ["Entretenimiento"], en: ["Entertainment"] } },
+    { id: "768", symbol: "🕹", description: { es: { main: "Joystick", secondary: ["mando", "play", "juego", "jugar"] }, en: { main: "Joystick", secondary: ["controller", "play", "game"] } }, tags: { es: ["Entretenimiento"], en: ["Entertainment"] } },
     { id: "769", symbol: "🖨", description: { es: { main: "Impresora" }, en: { main: "Printer" } }, tags: { es: ["Oficina"], en: ["Office"] } },
     { id: "770", symbol: "🪪", description: { es: { main: "Documento", secondary: ["DNI"] }, en: { main: "ID Card", secondary: ["ID"] } }, tags: { es: ["Tramites"], en: ["Paperwork"] } },
     { id: "771", symbol: "🧾", description: { es: { main: "Factura", secondary: ["Ticket"] }, en: { main: "Receipt", secondary: ["Ticket"] } }, tags: { es: ["Compras"], en: ["Shopping"] } },
@@ -887,7 +892,7 @@ export const symbols: SymbolItem[] = [
     { id: "869", symbol: "☕😐➡️😃", description: { es: { main: "Café" }, en: { main: "Coffee" } }, tags: { es: ["Expresiones"], en: ["Expressions"] } },
     { id: "870", symbol: "👊😤💥", description: { es: { main: "Bronca" }, en: { main: "Anger" } }, tags: { es: ["Expresiones"], en: ["Expressions"] } },
     { id: "871", symbol: "💸🫠", description: { es: { main: "Fin de mes" }, en: { main: "End of month" } }, tags: { es: ["Expresiones"], en: ["Expressions"] } },
-    { id: "872", symbol: "🎮🕹️😤", description: { es: { main: "Modo gamer" }, en: { main: "Gamer mode" } }, tags: { es: ["Expresiones"], en: ["Expressions"] } },
+    { id: "872", symbol: "🎮🕹️😤", description: { es: { main: "Modo gamer", secondary: ["Jugar"] }, en: { main: "Gamer mode", secondary: ["Play"] } }, tags: { es: ["Expresiones"], en: ["Expressions"] } },
     { id: "873", symbol: "😀", description: { es: { main: "Feliz", secondary: [":)", ":D", "Felicidad", "Contento"] }, en: { main: "Happy", secondary: [":)", ":D", "Happiness", "Content"] } }, tags: { es: ["Emociones"], en: ["Emotions"] } },
     { id: "874", symbol: "😃", description: { es: { main: "Feliz", secondary: [":)", ":D", "Felicidad", "Contento"] }, en: { main: "Happy", secondary: [":)", ":D", "Happiness", "Content"] } }, tags: { es: ["Emociones"], en: ["Emotions"] } },
     { id: "875", symbol: "😒", description: { es: { main: "Indiferencia" }, en: { main: "Indifference" } }, tags: { es: ["Emociones"], en: ["Emotions"] } },
