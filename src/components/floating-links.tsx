@@ -1,4 +1,4 @@
-import { Smile, Music, BicepsFlexed, ClipboardClock } from 'lucide-react'
+import { Smile, Music, Joystick, ClipboardClock } from 'lucide-react'
 import { useLanguage } from '../contexts/language-context'
 
 export function FloatingLinks() {
@@ -12,7 +12,7 @@ export function FloatingLinks() {
     // const emojisUrl = getUrl("https://emojis.gonzalogramagia.com") // Unused because button is disabled
     const musicUrl = getUrl("https://music.gonzalogramagia.com")
 
-    const trainingUrl = getUrl("https://entrenar.app")
+    const playUrl = getUrl("https://play.gonzalogramagia.com")
 
     return (
         <div className="fixed bottom-8 left-8 flex gap-3 z-50">
@@ -46,14 +46,14 @@ export function FloatingLinks() {
                 <Music className="w-6 h-6 text-zinc-900 dark:text-white group-hover:text-yellow-500 transition-colors" />
             </a>
 
-            {/* Training Button */}
+            {/* Play Button */}
             <a
-                href={trainingUrl}
-                className="hidden md:flex p-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 group cursor-pointer"
-                aria-label={t('ariaTraining')}
-                title={t('ariaTraining')}
+                href={playUrl}
+                className="p-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 group cursor-pointer"
+                aria-label={t('ariaPlay')}
+                title={t('ariaPlay')}
             >
-                <BicepsFlexed className="w-6 h-6 text-gray-900 dark:text-white group-hover:text-yellow-500 transition-colors" />
+                <Joystick className="w-6 h-6 text-zinc-900 dark:text-white group-hover:text-yellow-500 transition-colors" />
             </a>
         </div>
     )
