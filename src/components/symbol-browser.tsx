@@ -35,9 +35,10 @@ export function LanguageSwitch() {
 
 interface SymbolBrowserProps {
     onEdit?: (symbol: any) => void;
+    onCopy?: (symbol: string) => void;
 }
 
-export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
+export function SymbolBrowser({ onEdit, onCopy }: SymbolBrowserProps) {
     const { t } = useLanguage();
     const { customSymbols } = useCustomSymbols();
 
@@ -72,6 +73,7 @@ export function SymbolBrowser({ onEdit }: SymbolBrowserProps) {
         try {
             await navigator.clipboard.writeText(text);
             setCopiedSymbol(text);
+            onCopy?.(text);
         } catch (err) {
             console.error("Failed to copy!", err);
         }

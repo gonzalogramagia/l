@@ -224,3 +224,12 @@ input[type="date"] {
 input[type="date"]::-webkit-datetime-edit {
   cursor: pointer;
 }
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

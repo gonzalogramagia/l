@@ -43,6 +43,10 @@ const translations = {
         "config.delete": "Eliminar",
         "config.import_backup": "Importar Backup",
         "config.export_backup": "Exportar Backup",
+        "history.clear": "Limpiar",
+        "history.copy_all": "Clic para copiar todo",
+        "history.edit": "Editar historial",
+        "history.confirm_delete": "¿Borrar todo?",
     },
     en: {
         "search.placeholder": "Search emoji by name or tags...",
@@ -75,6 +79,10 @@ const translations = {
         "config.delete": "Delete",
         "config.import_backup": "Import Backup",
         "config.export_backup": "Export Backup",
+        "history.clear": "Clear",
+        "history.copy_all": "Click to copy all",
+        "history.edit": "Edit history",
+        "history.confirm_delete": "Delete all?",
     },
 };
 

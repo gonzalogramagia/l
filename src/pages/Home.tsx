@@ -2,14 +2,15 @@ import { SymbolBrowser } from "../components/symbol-browser";
 
 interface HomeProps {
   onEdit?: (symbol: any) => void;
+  onCopy?: (symbol: string) => void;
 }
 
-export default function EmojisPage({ onEdit }: HomeProps) {
+export default function EmojisPage({ onEdit, onCopy }: HomeProps) {
 
 
   return (
     <section>
-      <SymbolBrowser onEdit={onEdit} />
+      <SymbolBrowser onEdit={onEdit} onCopy={onCopy} />
 
       <br />
 
